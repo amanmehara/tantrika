@@ -54,6 +54,13 @@ public class Learning {
         }
 
         //Initializing the Back Propagation Neural Network
-        BackPropagation backPropagation = new BackPropagation(numberOfNodes, inputSamples, outputSamples, 0.1, 0.01, 0.001, 100);
+        BackPropagation backPropagation = new BackPropagation(numberOfNodes, inputSamples, outputSamples, 0.01, 0.01, 0.0001, 1000);
+
+        backPropagation.trainNetwork();
+
+        for(int i=0;i<backPropagation.actualOutput.length;i++) {
+           System.out.println(i + " : " + backPropagation.actualOutput[i][1]);
+        }
+
     }
 }
