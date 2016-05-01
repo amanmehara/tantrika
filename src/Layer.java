@@ -32,13 +32,18 @@ public class Layer {
             for (int j = 0; j < node[i].weight.length; j++)
                 net += input[j] * node[i].weight[j];
 
-            node[i].output = sigmoid(net);
+            node[i].output = activationFunctionTanH(net);
         }
     }
 
-    // Activation function
-    private double sigmoid(double Net) {
+    // Activation function (Sigmoid)
+    private double activationFunctionSigmoid(double Net) {
         return 1/(1+Math.exp(-Net));
+    }
+
+    // Activation function (TanH)
+    private double activationFunctionTanH(double Net) {
+        return Math.tanh(Net);
     }
 
     // Return the vector containing output from all Nodes
@@ -53,4 +58,4 @@ public class Layer {
 
         return (vector);
     }
-};
+}

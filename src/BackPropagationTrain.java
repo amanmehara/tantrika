@@ -1,4 +1,4 @@
-public class BackPropagation {
+public class BackPropagationTrain {
 
     private double learningRate;
 
@@ -25,13 +25,13 @@ public class BackPropagation {
     private double minimumError;
 
     //Constructor
-    public BackPropagation(int numberOfNodes[],
-                           double inputSamples[][],
-                           double outputSamples[][],
-                           double learningRate,
-                           double moment,
-                           double minimumError,
-                           long maximumEpochs) {
+    public BackPropagationTrain(int numberOfNodes[],
+                                double inputSamples[][],
+                                double outputSamples[][],
+                                double learningRate,
+                                double moment,
+                                double minimumError,
+                                long maximumEpochs) {
 
         // Initiate variables
         this.numberOfSamples = inputSamples.length;
@@ -107,6 +107,14 @@ public class BackPropagation {
         backPropagateError();
     }
 
+    private double derivativeActivationFunctionTanH(double x) {
+        return 1-Math.pow(x,2);
+    }
+
+    private double derivativeActivationFunctionSigmoid(double x) {
+        return x*(1-x);
+    }
+
     private void calculateSignalErrors() {
 
         int outputLayer = numberOfLayers -1;
@@ -115,7 +123,7 @@ public class BackPropagation {
         for (int i = 0; i < layer[outputLayer].node.length; i++) {
             layer[outputLayer].node[i].signalError
                     = (desiredOutput[sampleNumber][i] - layer[outputLayer].node[i].output)
-                    * layer[outputLayer].node[i].output * (1 - layer[outputLayer].node[i].output);
+                    * derivativeActivationFunctionTanH(layer[outputLayer].node[i].output);
         }
 
         // Calculate signal error for rest of the layers
@@ -125,7 +133,7 @@ public class BackPropagation {
                 for (int k = 0; k < layer[i+1].node.length; k++) {
                     sum += layer[i+1].node[k].weight[j] * layer[i+1].node[k].signalError;
                 }
-                layer[i].node[j].signalError = layer[i].node[j].output * (1 - layer[i].node[j].output) * sum;
+                layer[i].node[j].signalError = derivativeActivationFunctionTanH(layer[i].node[j].output) * sum;
             }
         }
     }
@@ -164,9 +172,10 @@ public class BackPropagation {
         overallError = 0;
         for (int i = 0; i < numberOfSamples; i++) {
             for (int j = 0; j < layer[numberOfLayers -1].node.length; j++) {
-                overallError += 0.5*(Math.pow(desiredOutput[i][j] - actualOutput[i][j],2));
+                overallError += (Math.pow(desiredOutput[i][j] - actualOutput[i][j],2));
             }
         }
+        overallError/=numberOfSamples;
     }
 
     // Training the Neural Network
@@ -190,8 +199,13 @@ public class BackPropagation {
 
             epochs++;
 
+//            if(epochs>2000) {
+//                this.momentum=0.9;
+//            }
+
             // Calculate Error Function
             calculateOverallError();
+            System.out.println("Epoch " + epochs + ": " + this.getError());
         } while ((overallError > minimumError) && (epochs < maximumEpochs));
     }
 }

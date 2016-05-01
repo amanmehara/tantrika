@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Node {
 
     public	double 	output;
@@ -42,4 +44,4 @@ public class Node {
 
     }
 
-};
+}
