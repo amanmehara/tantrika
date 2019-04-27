@@ -2,20 +2,20 @@ import java.util.Random;
 
 public class Node {
 
-    public	double 	output;
+    public double output;
 
-    public	double 	weight[];
+    public double weight[];
 
-    public	double	threshold;
+    public double threshold;
 
-    public	double	weightDiff[];
+    public double weightDiff[];
 
-    public	double	thresholdDiff;
+    public double thresholdDiff;
 
-    public	double	signalError;
+    public double signalError;
 
     //Constructor
-    public Node (int numberOfNodes) {
+    public Node(int numberOfNodes) {
         weight = new double[numberOfNodes];
         weightDiff = new double[numberOfNodes];
         initialiseWeights();
@@ -34,11 +34,11 @@ public class Node {
     //Initialise weights & threshold
     private void initialiseWeights() {
 
-        threshold = -1+2*Math.random();
+        threshold = -1 + 2 * Math.random();
         thresholdDiff = 0;
 
-        for(int i = 0; i < weight.length; i++) {
-            weight[i]= -1+2*Math.random();
+        for (int i = 0; i < weight.length; i++) {
+            weight[i] = -1 + 2 * Math.random();
             weightDiff[i] = 0;
         }
 

@@ -4,13 +4,13 @@ public class Layer {
     private double net;
 
     //Input from previous layer
-    public	double input[];
+    public double input[];
 
     // Nodes in current layer
     public Node node[];
 
     //Constructor
-    public Layer (int NumberOfNodes, int NumberOfInputs) {
+    public Layer(int NumberOfNodes, int NumberOfInputs) {
         node = new Node[NumberOfNodes];
 
         for (int i = 0; i < NumberOfNodes; i++)
@@ -38,7 +38,7 @@ public class Layer {
 
     // Activation function (Sigmoid)
     private double activationFunctionSigmoid(double Net) {
-        return 1/(1+Math.exp(-Net));
+        return 1 / (1 + Math.exp(-Net));
     }
 
     // Activation function (TanH)
@@ -53,7 +53,7 @@ public class Layer {
 
         vector = new double[node.length];
 
-        for (int i=0; i < node.length; i++)
+        for (int i = 0; i < node.length; i++)
             vector[i] = node[i].output;
 
         return (vector);

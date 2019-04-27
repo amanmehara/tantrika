@@ -15,8 +15,7 @@ public class Testing {
         List<Double> weights = readWeights("weights1");
 
 
-
-        int[] numberOfNodes= {30,21,1};
+        int[] numberOfNodes = {30, 21, 1};
 
         initializeIOSamples(samples);
 
@@ -29,31 +28,31 @@ public class Testing {
         PrintWriter out;
         try {
 
-            double meanDeviation=0;
-            double meanSquareError=0;
+            double meanDeviation = 0;
+            double meanSquareError = 0;
 
             out = new PrintWriter("delta");
-            int correct=0;
-            for(int i = 0; i< backPropagationTest.actualOutput.length; i++) {
-                double delta = backPropagationTest.actualOutput[i][0]-outputSamples[i][0];
+            int correct = 0;
+            for (int i = 0; i < backPropagationTest.actualOutput.length; i++) {
+                double delta = backPropagationTest.actualOutput[i][0] - outputSamples[i][0];
                 out.println(Math.abs(delta));
                 System.out.println(Math.abs(delta));
-                if(Math.abs(delta)<1) {
+                if (Math.abs(delta) < 1) {
                     correct++;
                 }
 
-                meanDeviation+=delta;
-                meanSquareError+=Math.pow(delta,2);
+                meanDeviation += delta;
+                meanSquareError += Math.pow(delta, 2);
             }
             out.close();
-            double accuracy=correct/(double)outputSamples.length;
-            double percentageAccuracy=correct/(double)outputSamples.length*100;
+            double accuracy = correct / (double) outputSamples.length;
+            double percentageAccuracy = correct / (double) outputSamples.length * 100;
 
             System.out.println(accuracy);
             System.out.println(percentageAccuracy);
 
-            meanDeviation/=(double) outputSamples.length;
-            meanSquareError/=(double) outputSamples.length;
+            meanDeviation /= (double) outputSamples.length;
+            meanSquareError /= (double) outputSamples.length;
 
             System.out.println(meanDeviation);
             System.out.println(meanSquareError);
@@ -67,20 +66,20 @@ public class Testing {
     private static void initializeWeights(List<Double> weights) {
         weightsArray = new double[weights.size()];
 
-        for (int i=0;i<weights.size();i++) {
-            weightsArray[i]=weights.get(i);
+        for (int i = 0; i < weights.size(); i++) {
+            weightsArray[i] = weights.get(i);
         }
     }
 
     private static void initializeIOSamples(List<int[]> samples) {
-        inputSamples=new double[samples.size()][samples.get(0).length-1];
-        outputSamples=new double[samples.size()][1];
+        inputSamples = new double[samples.size()][samples.get(0).length - 1];
+        outputSamples = new double[samples.size()][1];
 
-        for (int i=0; i<samples.size(); i++) {
-            for(int j=0;j<samples.get(i).length-1;j++) {
-                inputSamples[i][j]=samples.get(i)[j];
+        for (int i = 0; i < samples.size(); i++) {
+            for (int j = 0; j < samples.get(i).length - 1; j++) {
+                inputSamples[i][j] = samples.get(i)[j];
             }
-            outputSamples[i][0]=samples.get(i)[samples.get(i).length-1];
+            outputSamples[i][0] = samples.get(i)[samples.get(i).length - 1];
         }
     }
 
@@ -91,8 +90,8 @@ public class Testing {
         String weight;
 
         try {
-            bufferedReader=new BufferedReader(new FileReader(fileName));
-            while ((weight=bufferedReader.readLine())!=null) {
+            bufferedReader = new BufferedReader(new FileReader(fileName));
+            while ((weight = bufferedReader.readLine()) != null) {
                 weights.add(Double.parseDouble(weight));
             }
         } catch (IOException e) {
@@ -109,8 +108,8 @@ public class Testing {
         String sample;
 
         try {
-            bufferedReader=new BufferedReader(new FileReader(fileName));
-            while ((sample=bufferedReader.readLine())!=null) {
+            bufferedReader = new BufferedReader(new FileReader(fileName));
+            while ((sample = bufferedReader.readLine()) != null) {
                 samples.add(Arrays
                         .stream(sample.split(","))
                         .map(String::trim)
