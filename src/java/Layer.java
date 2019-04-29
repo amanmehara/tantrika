@@ -1,4 +1,8 @@
+import nn.activations.Activation;
+
 public class Layer {
+
+    public final Activation activation;
 
     //Net input
     private double net;
@@ -10,7 +14,9 @@ public class Layer {
     public Node node[];
 
     //Constructor
-    public Layer(int NumberOfNodes, int NumberOfInputs) {
+    public Layer(Activation activation, int NumberOfNodes, int NumberOfInputs) {
+        this.activation = activation;
+
         node = new Node[NumberOfNodes];
 
         for (int i = 0; i < NumberOfNodes; i++)
@@ -32,18 +38,8 @@ public class Layer {
             for (int j = 0; j < node[i].weight.length; j++)
                 net += input[j] * node[i].weight[j];
 
-            node[i].output = activationFunctionTanH(net);
+            node[i].output = this.activation.value(net);
         }
-    }
-
-    // Activation function (Sigmoid)
-    private double activationFunctionSigmoid(double Net) {
-        return 1 / (1 + Math.exp(-Net));
-    }
-
-    // Activation function (TanH)
-    private double activationFunctionTanH(double Net) {
-        return Math.tanh(Net);
     }
 
     // Return the vector containing output from all Nodes

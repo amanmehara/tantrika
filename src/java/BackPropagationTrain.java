@@ -1,3 +1,6 @@
+import nn.activations.Identity;
+import nn.activations.Tanh;
+
 public class BackPropagationTrain {
 
     private double learningRate;
@@ -45,11 +48,11 @@ public class BackPropagationTrain {
         this.layer = new Layer[numberOfLayers];
 
         // Input layer initialised
-        layer[0] = new Layer(numberOfNodes[0], numberOfNodes[0]);
+        layer[0] = new Layer(new Identity(), numberOfNodes[0], numberOfNodes[0]);
 
         // Layers other than input layer initialised
         for (int i = 1; i < numberOfLayers; i++) {
-            layer[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1]);
+            layer[i] = new Layer(new Tanh(), numberOfNodes[i], numberOfNodes[i - 1]);
         }
 
         input = new double[numberOfSamples][layer[0].node.length];
@@ -107,14 +110,6 @@ public class BackPropagationTrain {
         backPropagateError();
     }
 
-    private double derivativeActivationFunctionTanH(double x) {
-        return 1 - Math.pow(x, 2);
-    }
-
-    private double derivativeActivationFunctionSigmoid(double x) {
-        return x * (1 - x);
-    }
-
     private void calculateSignalErrors() {
 
         int outputLayer = numberOfLayers - 1;
@@ -123,7 +118,7 @@ public class BackPropagationTrain {
         for (int i = 0; i < layer[outputLayer].node.length; i++) {
             layer[outputLayer].node[i].signalError
                     = (desiredOutput[sampleNumber][i] - layer[outputLayer].node[i].output)
-                    * derivativeActivationFunctionTanH(layer[outputLayer].node[i].output);
+                    * layer[outputLayer].activation.derivative(layer[outputLayer].node[i].output);
         }
 
         // Calculate signal error for rest of the layers
@@ -133,7 +128,7 @@ public class BackPropagationTrain {
                 for (int k = 0; k < layer[i + 1].node.length; k++) {
                     sum += layer[i + 1].node[k].weight[j] * layer[i + 1].node[k].signalError;
                 }
-                layer[i].node[j].signalError = derivativeActivationFunctionTanH(layer[i].node[j].output) * sum;
+                layer[i].node[j].signalError = layer[i].activation.derivative(layer[i].node[j].output) * sum;
             }
         }
     }
