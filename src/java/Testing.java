@@ -21,10 +21,10 @@ import java.util.List;
 
 public class Testing {
     private static double[][] inputSamples;
-    static double[][] outputSamples;
-    static double[] weightsArray;
+    private static double[][] outputSamples;
+    private static double[] weightsArray;
 
-    public static void main(String Args[]) {
+    public static void main(String[] Args) {
 
         List<int[]> samples = readSampleData("testing_dataset");
 
@@ -37,7 +37,7 @@ public class Testing {
 
         initializeWeights(weights);
 
-        BackPropagationTest backPropagationTest = new BackPropagationTest(numberOfNodes, inputSamples, outputSamples, weightsArray, 0.01, 0.01);
+        BackPropagationTest backPropagationTest = new BackPropagationTest(numberOfNodes, inputSamples, outputSamples, weightsArray);
 
         backPropagationTest.testNetwork();
 

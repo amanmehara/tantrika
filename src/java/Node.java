@@ -1,4 +1,3 @@
-import java.util.Random;
 /*
  * Copyright 2019 Aman Mehara
  *
@@ -19,11 +18,11 @@ public class Node {
 
     public double output;
 
-    public double weight[];
+    public double[] weight;
 
     public double threshold;
 
-    public double weightDiff[];
+    public double[] weightDiff;
 
     public double thresholdDiff;
 
@@ -39,11 +38,6 @@ public class Node {
     //Getter
     public double[] getWeights() {
         return weight;
-    }
-
-    //Getter
-    public double getOutput() {
-        return output;
     }
 
     //Initialise weights & threshold

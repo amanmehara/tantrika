@@ -25,17 +25,17 @@ public class BackPropagationTrain {
 
     private int numberOfLayers;
 
-    public Layer layer[];
+    private Layer[] layer;
 
     private int numberOfSamples;
 
     private int sampleNumber;
 
-    private double input[][];
+    private double[][] input;
 
-    public double actualOutput[][];
+    private double[][] actualOutput;
 
-    private double desiredOutput[][];
+    private double[][] desiredOutput;
 
     private long maximumEpochs;
 
@@ -44,9 +44,9 @@ public class BackPropagationTrain {
     private double minimumError;
 
     //Constructor
-    public BackPropagationTrain(int numberOfNodes[],
-                                double inputSamples[][],
-                                double outputSamples[][],
+    public BackPropagationTrain(int[] numberOfNodes,
+                                double[][] inputSamples,
+                                double[][] outputSamples,
                                 double learningRate,
                                 double moment,
                                 double minimumError,
@@ -66,35 +66,30 @@ public class BackPropagationTrain {
         // Input layer initialised
         layer[0] = new Layer(new Identity(), numberOfNodes[0], numberOfNodes[0]);
 
-        // Layers other than input layer initialised
+        // Layers other than inputs layer initialised
         for (int i = 1; i < numberOfLayers; i++) {
             layer[i] = new Layer(new Tanh(), numberOfNodes[i], numberOfNodes[i - 1]);
         }
 
-        input = new double[numberOfSamples][layer[0].node.length];
+        input = new double[numberOfSamples][layer[0].nodes.length];
 
-        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].node.length];
+        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].nodes.length];
 
-        actualOutput = new double[numberOfSamples][layer[numberOfLayers - 1].node.length];
+        actualOutput = new double[numberOfSamples][layer[numberOfLayers - 1].nodes.length];
 
         // Assign Input Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[0].node.length; j++) {
+            for (int j = 0; j < layer[0].nodes.length; j++) {
                 input[i][j] = inputSamples[i][j];
             }
         }
 
         // Assign Output Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].node.length; j++) {
+            for (int j = 0; j < layer[numberOfLayers - 1].nodes.length; j++) {
                 desiredOutput[i][j] = outputSamples[i][j];
             }
         }
-    }
-
-    //Getter
-    public Layer[] getLayers() {
-        return layer;
     }
 
     // Getter
@@ -103,25 +98,25 @@ public class BackPropagationTrain {
         return overallError;
     }
 
-    // Calculate the node activations
+    // Calculate the nodes activations
     public void feedForward() {
 
         int i, j;
 
-        for (i = 0; i < layer[0].node.length; i++) {
-            layer[0].node[i].output = layer[0].input[i];
+        for (i = 0; i < layer[0].nodes.length; i++) {
+            layer[0].nodes[i].output = layer[0].inputs[i];
         }
 
-        layer[1].input = layer[0].input;
+        layer[1].inputs = layer[0].inputs;
         for (i = 1; i < numberOfLayers; i++) {
             layer[i].computeOutput();
             if (i != numberOfLayers - 1)
-                layer[i + 1].input = layer[i].outputVector();
+                layer[i + 1].inputs = layer[i].outputVector();
         }
 
     }
 
-    public void updateWeights() {
+    private void updateWeights() {
         calculateSignalErrors();
         backPropagateError();
     }
@@ -131,20 +126,20 @@ public class BackPropagationTrain {
         int outputLayer = numberOfLayers - 1;
 
         // Calculate signal error for output layer
-        for (int i = 0; i < layer[outputLayer].node.length; i++) {
-            layer[outputLayer].node[i].signalError
-                    = (desiredOutput[sampleNumber][i] - layer[outputLayer].node[i].output)
-                    * layer[outputLayer].activation.derivative(layer[outputLayer].node[i].output);
+        for (int i = 0; i < layer[outputLayer].nodes.length; i++) {
+            layer[outputLayer].nodes[i].signalError
+                    = (desiredOutput[sampleNumber][i] - layer[outputLayer].nodes[i].output)
+                    * layer[outputLayer].activation.derivative(layer[outputLayer].nodes[i].output);
         }
 
         // Calculate signal error for rest of the layers
         for (int i = numberOfLayers - 2; i > 0; i--) {
-            for (int j = 0; j < layer[i].node.length; j++) {
+            for (int j = 0; j < layer[i].nodes.length; j++) {
                 double sum = 0;
-                for (int k = 0; k < layer[i + 1].node.length; k++) {
-                    sum += layer[i + 1].node[k].weight[j] * layer[i + 1].node[k].signalError;
+                for (int k = 0; k < layer[i + 1].nodes.length; k++) {
+                    sum += layer[i + 1].nodes[k].weight[j] * layer[i + 1].nodes[k].signalError;
                 }
-                layer[i].node[j].signalError = layer[i].activation.derivative(layer[i].node[j].output) * sum;
+                layer[i].nodes[j].signalError = layer[i].activation.derivative(layer[i].nodes[j].output) * sum;
             }
         }
     }
@@ -154,25 +149,25 @@ public class BackPropagationTrain {
 
         // Update Weights
         for (int i = numberOfLayers - 1; i > 0; i--) {
-            for (int j = 0; j < layer[i].node.length; j++) {
+            for (int j = 0; j < layer[i].nodes.length; j++) {
 
                 // Calculate bias weight difference
-                layer[i].node[j].thresholdDiff
-                        = (learningRate * layer[i].node[j].signalError)
-                        + (momentum * layer[i].node[j].thresholdDiff);
+                layer[i].nodes[j].thresholdDiff
+                        = (learningRate * layer[i].nodes[j].signalError)
+                        + (momentum * layer[i].nodes[j].thresholdDiff);
 
                 // Update bias weight
-                layer[i].node[j].threshold = layer[i].node[j].threshold + layer[i].node[j].thresholdDiff;
+                layer[i].nodes[j].threshold = layer[i].nodes[j].threshold + layer[i].nodes[j].thresholdDiff;
 
                 // Update weights
-                for (int k = 0; k < layer[i].input.length; k++) {
+                for (int k = 0; k < layer[i].inputs.length; k++) {
                     // Calculate weight difference
-                    layer[i].node[j].weightDiff[k]
-                            = (learningRate * layer[i].node[j].signalError * layer[i - 1].node[k].output)
-                            + (momentum * layer[i].node[j].weightDiff[k]);
+                    layer[i].nodes[j].weightDiff[k]
+                            = (learningRate * layer[i].nodes[j].signalError * layer[i - 1].nodes[k].output)
+                            + (momentum * layer[i].nodes[j].weightDiff[k]);
 
                     // Update weight
-                    layer[i].node[j].weight[k] = layer[i].node[j].weight[k] + layer[i].node[j].weightDiff[k];
+                    layer[i].nodes[j].weight[k] = layer[i].nodes[j].weight[k] + layer[i].nodes[j].weightDiff[k];
                 }
             }
         }
@@ -182,7 +177,7 @@ public class BackPropagationTrain {
     private void calculateOverallError() {
         overallError = 0;
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].node.length; j++) {
+            for (int j = 0; j < layer[numberOfLayers - 1].nodes.length; j++) {
                 overallError += (Math.pow(desiredOutput[i][j] - actualOutput[i][j], 2));
             }
         }
@@ -196,14 +191,14 @@ public class BackPropagationTrain {
         do {
             for (sampleNumber = 0; sampleNumber < numberOfSamples; sampleNumber++) {
 
-                for (int i = 0; i < layer[0].node.length; i++) {
-                    layer[0].input[i] = input[sampleNumber][i];
+                for (int i = 0; i < layer[0].nodes.length; i++) {
+                    layer[0].inputs[i] = input[sampleNumber][i];
                 }
                 this.feedForward();
 
                 // Assign actualOutput
-                for (int i = 0; i < layer[numberOfLayers - 1].node.length; i++) {
-                    actualOutput[sampleNumber][i] = layer[numberOfLayers - 1].node[i].output;
+                for (int i = 0; i < layer[numberOfLayers - 1].nodes.length; i++) {
+                    actualOutput[sampleNumber][i] = layer[numberOfLayers - 1].nodes[i].output;
                 }
                 this.updateWeights();
             }

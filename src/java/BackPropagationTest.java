@@ -17,40 +17,30 @@
 import nn.activations.Identity;
 import nn.activations.Tanh;
 
+import java.util.stream.IntStream;
+
 public class BackPropagationTest {
-
-    private double learningRate;
-
-    private double momentum;
 
     private int numberOfLayers;
 
-    public Layer layer[];
+    private Layer[] layer;
 
     private int numberOfSamples;
 
-    private int sampleNumber;
+    private double[][] input;
 
-    private double input[][];
+    public double[][] actualOutput;
 
-    public double actualOutput[][];
-
-    private double desiredOutput[][];
-
-    private double weights[];
+    private double[][] desiredOutput;
 
     //Constructor
-    public BackPropagationTest(int numberOfNodes[],
-                               double inputSamples[][],
-                               double outputSamples[][],
-                               double weights[],
-                               double learningRate,
-                               double momentum) {
+    public BackPropagationTest(int[] numberOfNodes,
+                               double[][] inputSamples,
+                               double[][] outputSamples,
+                               double[] weights) {
 
         // Initiate variables
         this.numberOfSamples = inputSamples.length;
-        this.learningRate = learningRate;
-        this.momentum = momentum;
         this.numberOfLayers = numberOfNodes.length;
 
         // Create network layers
@@ -64,22 +54,22 @@ public class BackPropagationTest {
             layer[i] = new Layer(new Tanh(), numberOfNodes[i], numberOfNodes[i - 1]);
         }
 
-        input = new double[numberOfSamples][layer[0].node.length];
+        input = new double[numberOfSamples][layer[0].nodes.length];
 
-        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].node.length];
+        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].nodes.length];
 
-        actualOutput = new double[numberOfSamples][layer[numberOfLayers - 1].node.length];
+        actualOutput = new double[numberOfSamples][layer[numberOfLayers - 1].nodes.length];
 
         // Assign Input Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[0].node.length; j++) {
+            for (int j = 0; j < layer[0].nodes.length; j++) {
                 input[i][j] = inputSamples[i][j];
             }
         }
 
         // Assign Output Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].node.length; j++) {
+            for (int j = 0; j < layer[numberOfLayers - 1].nodes.length; j++) {
                 desiredOutput[i][j] = outputSamples[i][j];
             }
         }
@@ -87,34 +77,29 @@ public class BackPropagationTest {
         // Assign Weights
         int weightsCount = 0;
         for (int i = 0; i < layer.length; i++) {
-            for (int j = 0; j < layer[i].node.length; j++) {
-                for (int k = 0; k < layer[i].node[j].weight.length; k++) {
-                    layer[i].node[j].weight[k] = weights[weightsCount];
+            for (int j = 0; j < layer[i].nodes.length; j++) {
+                for (int k = 0; k < layer[i].nodes[j].weight.length; k++) {
+                    layer[i].nodes[j].weight[k] = weights[weightsCount];
                     weightsCount++;
                 }
             }
         }
     }
 
-    //Getter
-    public Layer[] getLayers() {
-        return layer;
-    }
-
-    // Calculate the node activations
+    // Calculate the nodes activations
     public void feedForward() {
 
-        int i, j;
+        int i;
 
-        for (i = 0; i < layer[0].node.length; i++) {
-            layer[0].node[i].output = layer[0].input[i];
+        for (i = 0; i < layer[0].nodes.length; i++) {
+            layer[0].nodes[i].output = layer[0].inputs[i];
         }
 
-        layer[1].input = layer[0].input;
+        layer[1].inputs = layer[0].inputs;
         for (i = 1; i < numberOfLayers; i++) {
             layer[i].computeOutput();
             if (i != numberOfLayers - 1)
-                layer[i + 1].input = layer[i].outputVector();
+                layer[i + 1].inputs = layer[i].outputVector();
         }
 
     }
@@ -122,17 +107,16 @@ public class BackPropagationTest {
     // Test the Neural Network
     public void testNetwork() {
 
-        for (sampleNumber = 0; sampleNumber < numberOfSamples; sampleNumber++) {
-
-            for (int i = 0; i < layer[0].node.length; i++) {
-                layer[0].input[i] = input[sampleNumber][i];
+        IntStream.range(0, numberOfSamples).forEach(sampleNumber -> {
+            for (int i = 0; i < layer[0].nodes.length; i++) {
+                layer[0].inputs[i] = input[sampleNumber][i];
             }
             this.feedForward();
 
             // Assign actualOutput
-            for (int i = 0; i < layer[numberOfLayers - 1].node.length; i++) {
-                actualOutput[sampleNumber][i] = layer[numberOfLayers - 1].node[i].output;
+            for (int i = 0; i < layer[numberOfLayers - 1].nodes.length; i++) {
+                actualOutput[sampleNumber][i] = layer[numberOfLayers - 1].nodes[i].output;
             }
-        }
+        });
     }
 }
