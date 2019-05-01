@@ -18,24 +18,54 @@ package math;
 
 public class LinAlg {
 
-    public static double[][] matmul(double[][] matrix1, double[][] matrix2) {
+    public static double[][] matrixAddition(double[][] matrix1, double[][] matrix2) {
+
+        assert matrix1.length == matrix2.length && matrix1[0].length == matrix2[0].length;
+
+        int outerDim = matrix1.length;
+        int innerDim = matrix1[0].length;
+
+        double[][] m = new double[outerDim][innerDim];
+        for (int outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (int innerIdx = 0; innerIdx < innerDim; innerIdx++) {
+                m[outerIdx][innerIdx] = matrix1[outerIdx][innerIdx] + matrix2[outerIdx][innerIdx];
+            }
+        }
+        return m;
+    }
+
+    public static double[][] matrixMultiplication(double[][] matrix1, double[][] matrix2) {
 
         assert matrix1[0].length == matrix2.length;
 
         int outerDim = matrix1.length;
         int innerDim = matrix2[0].length;
 
-        double[][] matrix = new double[outerDim][innerDim];
+        double[][] m = new double[outerDim][innerDim];
         for (int outerIdx = 0; outerIdx < matrix1.length; outerIdx++) {
             for (int innerIdx = 0; innerIdx < matrix2[0].length; innerIdx++) {
-                matrix[outerIdx][innerIdx] = 0.0;
+                m[outerIdx][innerIdx] = 0.0;
                 for (int cumIndex = 0; cumIndex < matrix2.length; cumIndex++) {
-                    matrix[outerIdx][innerIdx] += matrix[outerIdx][cumIndex] * matrix[cumIndex][innerIdx];
+                    m[outerIdx][innerIdx] += m[outerIdx][cumIndex] * m[cumIndex][innerIdx];
                 }
             }
         }
-        return matrix;
+        return m;
 
+    }
+
+    public static double[][] scalarMultiplication(double[][] matrix, double scalar) {
+
+        int outerDim = matrix.length;
+        int innerDim = matrix[0].length;
+
+        double[][] m = new double[outerDim][innerDim];
+        for (int outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (int innerIdx = 0; innerIdx < innerDim; innerIdx++) {
+                m[outerIdx][innerIdx] = matrix[outerIdx][innerIdx] * scalar;
+            }
+        }
+        return m;
     }
 
     public static double[][] reshape(double[] vector, int outerDim, int innerDim) {
