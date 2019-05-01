@@ -14,52 +14,79 @@
  * limitations under the License.
  */
 
+import math.LinAlg;
 import nn.activations.Activation;
+
+import java.util.Arrays;
+import java.util.Random;
 
 public class Layer {
 
-    public final Activation activation;
+    private final Activation activation;
+    public double[] bias;
+    public double[][] kernel;
+    public final int inputDim;
+    public final int units;
+    private final boolean useBias;
 
-    //Input from previous layer
+    public double[] biasDifference;
+    public double[][] kernelDifference;
+
+    public double[] signalError;
+
     public double[] inputs;
 
-    public final Node[] nodes;
+    public double[] output;
 
     //Constructor
-    public Layer(Activation activation, int NumberOfNodes, int NumberOfInputs) {
+    public Layer(int units, int inputDim, Activation activation, boolean useBias) {
+        this.units = units;
+        this.inputDim = inputDim;
         this.activation = activation;
 
-        nodes = new Node[NumberOfNodes];
+        this.inputs = new double[inputDim];
 
-        for (int i = 0; i < NumberOfNodes; i++)
-            nodes[i] = new Node(NumberOfInputs);
+        this.kernel = this.initializeKernel();
+        this.kernelDifference =  new double[inputDim][units];
+        this.useBias = useBias;
+        this.bias = useBias ? this.initializeBias() : null;
+        this.biasDifference = useBias ? new double[units]: null;
 
-        inputs = new double[NumberOfInputs];
+        this.signalError = new double[units];
     }
 
-    public Node node(int index) {
-        return this.nodes[index];
-    }
-
-    public Node[] nodes() {
-        return this.nodes;
-    }
-
-    // Calculates output for all the nodes in the current layer (except inputs layer)
-    public void computeOutput() {
-        for (Node node : nodes) {
-            double output = node.threshold;
-            for (int j = 0; j < node.weight.length; j++)
-                output += inputs[j] * node.weight[j];
-            node.output = this.activation.value(output);
+    private double[][] initializeKernel() {
+        var kernel = new double[this.inputDim][this.units];
+        Random random = new Random();
+        for (int outerIndex = 0; outerIndex < this.inputDim; outerIndex++) {
+            for (int innerIndex = 0; innerIndex < this.units; innerIndex++) {
+                kernel[outerIndex][innerIndex] = random.nextDouble() * 2.0 - 1.0;
+            }
         }
+        return kernel;
     }
 
-    public double[] outputVector() {
-        double[] outputs;
-        outputs = new double[nodes.length];
-        for (int i = 0; i < nodes.length; i++)
-            outputs[i] = nodes[i].output;
-        return outputs;
+    private double[] initializeBias() {
+        var bias = new double[this.units];
+        Random random = new Random();
+        for (int index = 0; index < this.units; index++) {
+            bias[index] =  random.nextDouble();
+        }
+        return bias;
     }
+
+    public Activation activation() {
+        return this.activation;
+    }
+
+    public double[] computeOutputs() {
+        var inputs = LinAlg.reshape(this.inputs, 1, this.inputDim);
+        var outputs = LinAlg.matrixMultiplication(inputs, this.kernel);
+        if (this.useBias) {
+            var bias = LinAlg.reshape(this.bias, 1, this.units);
+            outputs = LinAlg.matrixAddition(outputs, bias);
+        }
+        return Arrays.stream(LinAlg.reshape(outputs)).map(this.activation::value).toArray();
+    }
+
 }

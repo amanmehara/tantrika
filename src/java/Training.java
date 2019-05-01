@@ -63,59 +63,12 @@ public class Training {
             for (int j = 0; j < samples.get(i).length - 1; j++) {
                 inputSamples[i][j] = samples.get(i)[j];
             }
-//            outputSamples[i][0]=(samples.get(i)[samples.get(i).length-1]==1?1:0);
             outputSamples[i][0] = samples.get(i)[samples.get(i).length - 1];
         }
 
-        //Initializing the Back Propagation Neural Network
         BackPropagationTrain backPropagationTrain = new BackPropagationTrain(numberOfNodes, inputSamples, outputSamples, 0.01, 0.01, 0.01, 1024);
 
         backPropagationTrain.trainNetwork();
-
-//        PrintWriter out;
-//        try {
-//            out = new PrintWriter("actual_output");
-//
-//            for (int i = 0; i < backPropagationTrain.actualOutput.length; i++) {
-//                System.out.println(i + " : " + outputSamples[i][0] + " : " + backPropagationTrain.actualOutput[i][0]);
-//                out.println(backPropagationTrain.actualOutput[i][0]);
-//            }
-//
-//            out.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        PrintWriter weightsWriter;
-//        try {
-//            weightsWriter = new PrintWriter("weights1");
-//            for (int i = 0; i < backPropagationTrain.layer.length; i++) {
-//                for (int j = 0; j < backPropagationTrain.layer[i].nodes().length; j++) {
-//                    for (int k = 0; k < backPropagationTrain.layer[i].nodes[j].getWeights().length; k++) {
-//                        System.out.println("layer: " + i + ", nodes: " + j + " - weight " + k + " || " + backPropagationTrain.layer[i].nodes[j].weight[k]);
-//                        weightsWriter.println(backPropagationTrain.layer[i].nodes[j].weight[k]);
-//                    }
-//                }
-//            }
-//            weightsWriter.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        PrintWriter thresholdWriter;
-//        try {
-//            thresholdWriter = new PrintWriter("threshold");
-//            for (int i = 0; i < backPropagationTrain.layer.length; i++) {
-//                for (int j = 0; j < backPropagationTrain.layer[i].nodes().length; j++) {
-//                    System.out.println("layer: " + i + ", nodes: " + j + " - bias " + " || " + backPropagationTrain.layer[i].nodes[j].threshold);
-//                    thresholdWriter.println(backPropagationTrain.layer[i].nodes[j].threshold);
-//                }
-//            }
-//            thresholdWriter.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
 
         System.out.println(backPropagationTrain.getError());
 
