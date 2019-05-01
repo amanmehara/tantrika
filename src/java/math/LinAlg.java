@@ -22,12 +22,12 @@ public class LinAlg {
 
         assert matrix1.length == matrix2.length && matrix1[0].length == matrix2[0].length;
 
-        int outerDim = matrix1.length;
-        int innerDim = matrix1[0].length;
+        var outerDim = matrix1.length;
+        var innerDim = matrix1[0].length;
 
-        double[][] m = new double[outerDim][innerDim];
-        for (int outerIdx = 0; outerIdx < outerDim; outerIdx++) {
-            for (int innerIdx = 0; innerIdx < innerDim; innerIdx++) {
+        var m = new double[outerDim][innerDim];
+        for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
                 m[outerIdx][innerIdx] = matrix1[outerIdx][innerIdx] + matrix2[outerIdx][innerIdx];
             }
         }
@@ -38,15 +38,15 @@ public class LinAlg {
 
         assert matrix1[0].length == matrix2.length;
 
-        int outerDim = matrix1.length;
-        int innerDim = matrix2[0].length;
+        var outerDim = matrix1.length;
+        var innerDim = matrix2[0].length;
 
-        double[][] m = new double[outerDim][innerDim];
-        for (int outerIdx = 0; outerIdx < matrix1.length; outerIdx++) {
-            for (int innerIdx = 0; innerIdx < matrix2[0].length; innerIdx++) {
+        var m = new double[outerDim][innerDim];
+        for (var outerIdx = 0; outerIdx < matrix1.length; outerIdx++) {
+            for (var innerIdx = 0; innerIdx < matrix2[0].length; innerIdx++) {
                 m[outerIdx][innerIdx] = 0.0;
-                for (int cumIndex = 0; cumIndex < matrix2.length; cumIndex++) {
-                    m[outerIdx][innerIdx] += m[outerIdx][cumIndex] * m[cumIndex][innerIdx];
+                for (var cumIndex = 0; cumIndex < matrix2.length; cumIndex++) {
+                    m[outerIdx][innerIdx] += matrix1[outerIdx][cumIndex] * matrix2[cumIndex][innerIdx];
                 }
             }
         }
@@ -56,12 +56,12 @@ public class LinAlg {
 
     public static double[][] scalarMultiplication(double[][] matrix, double scalar) {
 
-        int outerDim = matrix.length;
-        int innerDim = matrix[0].length;
+        var outerDim = matrix.length;
+        var innerDim = matrix[0].length;
 
-        double[][] m = new double[outerDim][innerDim];
-        for (int outerIdx = 0; outerIdx < outerDim; outerIdx++) {
-            for (int innerIdx = 0; innerIdx < innerDim; innerIdx++) {
+        var m = new double[outerDim][innerDim];
+        for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
                 m[outerIdx][innerIdx] = matrix[outerIdx][innerIdx] * scalar;
             }
         }
@@ -72,11 +72,25 @@ public class LinAlg {
 
         assert vector.length == outerDim * innerDim;
 
-        double[][] matrix = new double[outerDim][innerDim];
-        for (int idx = 0; idx < vector.length; idx++) {
-            matrix[idx / outerDim][idx % innerDim] = vector[idx];
+        var matrix = new double[outerDim][innerDim];
+        for (var idx = 0; idx < vector.length; idx++) {
+            matrix[idx / innerDim][idx % innerDim] = vector[idx];
         }
         return matrix;
+
+    }
+
+    public static double[] reshape(double[][] matrix) {
+
+        var outerDim = matrix.length;
+        var innerDim = matrix[0].length;
+        var dim = outerDim * innerDim;
+
+        var vector = new double[dim];
+        for (var idx = 0; idx < vector.length; idx++) {
+            vector[idx] = matrix[idx / innerDim][idx % innerDim];
+        }
+        return vector;
 
     }
 
