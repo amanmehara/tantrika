@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
 

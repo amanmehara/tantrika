@@ -1,4 +1,4 @@
-/*
+package nn;/*
  * Copyright 2019 Aman Mehara
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ public class Layer {
     private final Activation activation;
     public double[] bias;
     public double[][] kernel;
-    public final int inputDim;
+    private final int inputDim;
     public final int units;
     private final boolean useBias;
 
@@ -35,8 +35,6 @@ public class Layer {
     public double[] signalError;
 
     public double[] inputs;
-
-    public double[] output;
 
     //Constructor
     public Layer(int units, int inputDim, Activation activation, boolean useBias) {
