@@ -25,7 +25,7 @@ public class Tanh implements Activation {
 
     @Override
     public double derivative(double input) {
-        return 1.0 - Math.pow(Math.tanh(input), 2.0);
+        return 1.0 - Math.pow(this.value(input), 2.0);
     }
 
 }

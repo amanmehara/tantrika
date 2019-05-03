@@ -17,6 +17,7 @@
 package nn.activations;
 
 public class Identity implements Activation {
+
     @Override
     public double value(double input) {
         return input;
@@ -24,6 +25,7 @@ public class Identity implements Activation {
 
     @Override
     public double derivative(double input) {
-        return 1.;
+        return 1.0;
     }
+
 }

@@ -20,12 +20,12 @@ public class ReLU implements Activation {
 
     @Override
     public double value(double input) {
-        return 1. / (1. + Math.exp(-input));
+        return Math.max(0.0, input);
     }
 
     @Override
     public double derivative(double input) {
-        return value(input) * (1. - value(input));
+        return input <= 0.0 ? 0.0 : 1.0;
     }
 
 }

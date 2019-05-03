@@ -20,12 +20,12 @@ public class Sigmoid implements Activation {
 
     @Override
     public double value(double input) {
-        return Math.max(0., input);
+        return 1.0 / (1.0 + Math.exp(-1.0 * input));
     }
 
     @Override
     public double derivative(double input) {
-        return input < 0 ? 0. : 1.;
+        return this.value(input) * (1.0 - this.value(input));
     }
 
 }
