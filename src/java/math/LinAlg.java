@@ -16,7 +16,39 @@
 
 package math;
 
+import java.util.function.Function;
+
 public class LinAlg {
+
+    public static double[][] broadcast(double[][] matrix, int factor) {
+
+        assert matrix.length == 1 || matrix[0].length == 1;
+
+        boolean broadcastOuterDim;
+
+        var outerDim = matrix.length;
+        var innerDim = matrix[0].length;
+
+        if (outerDim == 1) {
+            outerDim *= factor;
+            broadcastOuterDim = true;
+        } else {
+            innerDim *= factor;
+            broadcastOuterDim = false;
+        }
+
+        var m = new double[outerDim][innerDim];
+        for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
+                if (broadcastOuterDim) {
+                    m[outerIdx][innerIdx] = matrix[0][innerIdx];
+                } else {
+                    m[outerIdx][innerIdx] = matrix[outerIdx][0];
+                }
+            }
+        }
+        return m;
+    }
 
     public static double[][] matrixAddition(double[][] matrix1, double[][] matrix2) {
 
@@ -54,18 +86,19 @@ public class LinAlg {
 
     }
 
-    public static double[][] scalarMultiplication(double[][] matrix, double scalar) {
+    public static double[][] matrixTranspose(double[][] matrix) {
 
-        var outerDim = matrix.length;
-        var innerDim = matrix[0].length;
+        var outerDim = matrix[0].length;
+        var innerDim = matrix.length;
 
         var m = new double[outerDim][innerDim];
         for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
             for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
-                m[outerIdx][innerIdx] = matrix[outerIdx][innerIdx] * scalar;
+                m[outerIdx][innerIdx] = matrix[innerIdx][outerIdx];
             }
         }
         return m;
+
     }
 
     public static double[][] reshape(double[] vector, int outerDim, int innerDim) {
@@ -91,6 +124,36 @@ public class LinAlg {
             vector[idx] = matrix[idx / innerDim][idx % innerDim];
         }
         return vector;
+
+    }
+
+    public static double[][] scalarMultiplication(double[][] matrix, double scalar) {
+
+        var outerDim = matrix.length;
+        var innerDim = matrix[0].length;
+
+        var m = new double[outerDim][innerDim];
+        for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
+                m[outerIdx][innerIdx] = matrix[outerIdx][innerIdx] * scalar;
+            }
+        }
+        return m;
+    }
+
+    public static double[][] transform(double[][] matrix, Function<Double, Double> function) {
+
+        var outerDim = matrix.length;
+        var innerDim = matrix[0].length;
+
+        var m = new double[outerDim][innerDim];
+        for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
+            for (var innerIdx = 0; innerIdx < innerDim; innerDim++) {
+                m[outerIdx][innerIdx] = function.apply(matrix[outerIdx][innerIdx]);
+            }
+        }
+
+        return m;
 
     }
 
