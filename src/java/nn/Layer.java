@@ -1,4 +1,4 @@
-package nn;/*
+/*
  * Copyright 2019 Aman Mehara
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,11 @@ package nn;/*
  * limitations under the License.
  */
 
+package nn;
+
 import math.LinAlg;
 import nn.activations.Activation;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Layer {
@@ -32,32 +33,31 @@ public class Layer {
     public double[] biasDifference;
     public double[][] kernelDifference;
 
-    public double[] signalError;
+    public double[][] signalError;
 
-    public double[] inputs;
+    public double[][] inputs;
 
-    //Constructor
     public Layer(int units, int inputDim, Activation activation, boolean useBias) {
         this.units = units;
         this.inputDim = inputDim;
         this.activation = activation;
 
-        this.inputs = new double[inputDim];
+        this.inputs = new double[inputDim][];
 
         this.kernel = this.initializeKernel();
-        this.kernelDifference =  new double[inputDim][units];
+        this.kernelDifference = new double[units][inputDim];
         this.useBias = useBias;
         this.bias = useBias ? this.initializeBias() : null;
-        this.biasDifference = useBias ? new double[units]: null;
+        this.biasDifference = useBias ? new double[units] : null;
 
-        this.signalError = new double[units];
+        this.signalError = new double[units][];
     }
 
     private double[][] initializeKernel() {
-        var kernel = new double[this.inputDim][this.units];
+        var kernel = new double[units][inputDim];
         Random random = new Random();
-        for (int outerIndex = 0; outerIndex < this.inputDim; outerIndex++) {
-            for (int innerIndex = 0; innerIndex < this.units; innerIndex++) {
+        for (int outerIndex = 0; outerIndex < units; outerIndex++) {
+            for (int innerIndex = 0; innerIndex < inputDim; innerIndex++) {
                 kernel[outerIndex][innerIndex] = random.nextDouble() * 2.0 - 1.0;
             }
         }
@@ -68,23 +68,23 @@ public class Layer {
         var bias = new double[this.units];
         Random random = new Random();
         for (int index = 0; index < this.units; index++) {
-            bias[index] =  random.nextDouble();
+            bias[index] = random.nextDouble();
         }
         return bias;
     }
 
     public Activation activation() {
-        return this.activation;
+        return activation;
     }
 
-    public double[] computeOutputs() {
-        var inputs = LinAlg.reshape(this.inputs, 1, this.inputDim);
-        var outputs = LinAlg.matrixMultiplication(inputs, this.kernel);
-        if (this.useBias) {
-            var bias = LinAlg.reshape(this.bias, 1, this.units);
+    public double[][] computeOutputs() {
+        var outputs = LinAlg.matrixMultiplication(kernel, inputs);
+        if (useBias) {
+            var factor = inputs[0].length;
+            var bias = LinAlg.broadcast(LinAlg.reshape(this.bias, units, 1), 0, factor);
             outputs = LinAlg.matrixAddition(outputs, bias);
         }
-        return Arrays.stream(LinAlg.reshape(outputs)).map(this.activation::value).toArray();
+        return LinAlg.transform(outputs, activation::value);
     }
 
 }

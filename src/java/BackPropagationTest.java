@@ -14,114 +14,64 @@
  * limitations under the License.
  */
 
+import math.LinAlg;
 import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
 
-import java.util.stream.IntStream;
-
 public class BackPropagationTest {
 
     private int numberOfLayers;
+    private Layer[] layers;
+    private double[][] inputs;
 
-    private Layer[] layer;
-
-    private int numberOfSamples;
-
-    private double[][] input;
-
-    public double[][] actualOutput;
-
-    private double[][] desiredOutput;
-
-    //Constructor
-    public BackPropagationTest(int[] numberOfNodes,
-                               double[][] inputSamples,
-                               double[][] outputSamples,
-                               double[] weights) {
+    public BackPropagationTest(int[] numberOfNodes, double[][] inputSamples, double[] weights) {
 
         // Initiate variables
-        this.numberOfSamples = inputSamples.length;
+        int numberOfSamples = inputSamples.length;
         this.numberOfLayers = numberOfNodes.length;
 
-        // Create network layers
-        this.layer = new Layer[numberOfLayers];
-
-        // Input layer initialised
-        layer[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), false);
-
-        // Layers other than input layer initialised
+        layers = new Layer[numberOfLayers];
+        layers[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), false);
         for (int i = 1; i < numberOfLayers; i++) {
-            layer[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), true);
+            layers[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), true);
         }
 
-        input = new double[numberOfSamples][layer[0].units];
-
-        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].units];
-
-        actualOutput = new double[numberOfSamples][layer[numberOfLayers - 1].units];
+        inputs = new double[numberOfSamples][layers[0].units];
 
         // Assign Input Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[0].units; j++) {
-                input[i][j] = inputSamples[i][j];
+            for (int j = 0; j < layers[0].units; j++) {
+                inputs[i][j] = inputSamples[i][j];
             }
         }
 
-        // Assign Output Set
-        for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].units; j++) {
-                desiredOutput[i][j] = outputSamples[i][j];
-            }
-        }
-
-        // Assign Weights
+        // TODO: Enhance serialization and deserialization process.
         int weightsCount = 0;
-        for (int i = 0; i < layer.length; i++) {
-            for (int j = 0; j < layer[i].units; j++) {
-                for (int k = 0; k < layer[i].kernel.length; k++) {
-                    layer[i].kernel[k][j] = weights[weightsCount];
+        for (Layer layer : layers) {
+            for (int k = 0; k < layer.kernel.length; k++) {
+                for (int j = 0; j < layer.inputs.length; j++) {
+                    layer.kernel[k][j] = weights[weightsCount];
                     weightsCount++;
                 }
             }
         }
     }
 
-    // Calculate the nodes activations
-    private double[] feedForward() {
-
-        int i;
-
-//        for (i = 0; i < layer[0].units; i++) {
-//            layer[0].nodes[i].output = layer[0].inputs[i];
-//        }
-
-        layer[1].inputs = layer[0].inputs;
-        for (i = 1; i < numberOfLayers; i++) {
-            var outputs = layer[i].computeOutputs();
-            if (i != numberOfLayers - 1)
-                layer[i + 1].inputs = outputs;
-            else
-                return outputs;
+    private double[][] feedForward() {
+        var idx = 0;
+        layers[idx + 1].inputs = layers[idx].inputs;
+        idx++;
+        while (idx < numberOfLayers - 1) {
+            layers[idx + 1].inputs = layers[idx].computeOutputs();
+            idx++;
         }
-
-        // Making the compiler happy.
-        return null;
+        return layers[idx].computeOutputs();
     }
 
-    // Test the Neural Network
-    public void testNetwork() {
-
-        IntStream.range(0, numberOfSamples).forEach(sampleNumber -> {
-            for (int i = 0; i < layer[0].units; i++) {
-                layer[0].inputs[i] = input[sampleNumber][i];
-            }
-            var outputs = this.feedForward();
-
-            // Assign actualOutput
-            for (int i = 0; i < layer[numberOfLayers - 1].units; i++) {
-                actualOutput[sampleNumber][i] = outputs[i];
-            }
-        });
+    public double[][] test() {
+        layers[0].inputs = LinAlg.matrixTranspose(inputs);
+        return LinAlg.matrixTranspose(feedForward());
     }
+
 }

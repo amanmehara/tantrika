@@ -34,31 +34,31 @@ public class Testing {
         int[] numberOfNodes = {30, 21, 1};
 
         initializeIOSamples(samples);
-
         initializeWeights(weights);
 
-        BackPropagationTest backPropagationTest = new BackPropagationTest(numberOfNodes, inputSamples, outputSamples, weightsArray);
+        BackPropagationTest backPropagationTest = new BackPropagationTest(numberOfNodes, inputSamples, weightsArray);
 
-        backPropagationTest.testNetwork();
+        var actualOutputs = backPropagationTest.test();
 
         PrintWriter out;
         try {
 
-            double meanDeviation = 0;
-            double meanSquareError = 0;
+            var meanDeviation = 0.0;
+            var meanSquareError = 0.0;
 
             out = new PrintWriter("delta");
             int correct = 0;
-            for (int i = 0; i < backPropagationTest.actualOutput.length; i++) {
-                double delta = backPropagationTest.actualOutput[i][0] - outputSamples[i][0];
+            for (int i = 0; i < actualOutputs.length; i++) {
+                double delta = actualOutputs[i][0] - outputSamples[i][0];
                 out.println(Math.abs(delta));
+                System.out.print(String.format("delta(%04d): ", i));
                 System.out.println(Math.abs(delta));
-                if (Math.abs(delta) < 1) {
+                if (Math.abs(delta) < 0.1) {
                     correct++;
                 }
 
                 meanDeviation += delta;
-                meanSquareError += Math.pow(delta, 2);
+                meanSquareError += Math.pow(delta, 2.0);
             }
             out.close();
             double accuracy = correct / (double) outputSamples.length;
