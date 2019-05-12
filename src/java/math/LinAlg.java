@@ -20,27 +20,24 @@ import java.util.function.Function;
 
 public class LinAlg {
 
-    public static double[][] broadcast(double[][] matrix, int factor) {
+    public static double[][] broadcast(double[][] matrix, int dim, int factor) {
 
-        assert matrix.length == 1 || matrix[0].length == 1;
+        assert (matrix.length == 1 && dim == 1) || (matrix[0].length == 1 && dim == 0);
 
-        boolean broadcastOuterDim;
 
         var outerDim = matrix.length;
         var innerDim = matrix[0].length;
 
-        if (outerDim == 1) {
+        if (dim == 1) {
             outerDim *= factor;
-            broadcastOuterDim = true;
         } else {
             innerDim *= factor;
-            broadcastOuterDim = false;
         }
 
         var m = new double[outerDim][innerDim];
         for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
             for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
-                if (broadcastOuterDim) {
+                if (dim == 1) {
                     m[outerIdx][innerIdx] = matrix[0][innerIdx];
                 } else {
                     m[outerIdx][innerIdx] = matrix[outerIdx][0];
@@ -148,7 +145,7 @@ public class LinAlg {
 
         var m = new double[outerDim][innerDim];
         for (var outerIdx = 0; outerIdx < outerDim; outerIdx++) {
-            for (var innerIdx = 0; innerIdx < innerDim; innerDim++) {
+            for (var innerIdx = 0; innerIdx < innerDim; innerIdx++) {
                 m[outerIdx][innerIdx] = function.apply(matrix[outerIdx][innerIdx]);
             }
         }
