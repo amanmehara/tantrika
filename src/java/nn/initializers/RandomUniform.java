@@ -27,7 +27,7 @@ public class RandomUniform implements Initializer {
     private final double minimum;
     private final double maximum;
 
-    RandomUniform(final double minimum, final double maximum) {
+    public RandomUniform(final double minimum, final double maximum) {
         this.minimum = minimum;
         this.maximum = maximum;
     }
