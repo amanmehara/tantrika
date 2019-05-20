@@ -28,6 +28,10 @@ public class RandomUniform implements Initializer {
     private final double maximum;
 
     public RandomUniform(final double minimum, final double maximum) {
+        if(minimum > maximum) {
+            throw new IllegalArgumentException();
+        }
+
         this.minimum = minimum;
         this.maximum = maximum;
     }
