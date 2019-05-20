@@ -18,6 +18,8 @@ import math.linalg.Matrix;
 import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
+import nn.initializers.RandomUniform;
+import nn.initializers.Zeros;
 
 public class BackPropagationTest {
 
@@ -32,9 +34,9 @@ public class BackPropagationTest {
         this.numberOfLayers = numberOfNodes.length;
 
         layers = new Layer[numberOfLayers];
-        layers[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), false);
+        layers[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), new RandomUniform(-1.0, 1.0));
         for (int i = 1; i < numberOfLayers; i++) {
-            layers[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), true);
+            layers[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), new RandomUniform(-1.0, 1.0), new Zeros());
         }
 
         inputs = new double[numberOfSamples][layers[0].units()];

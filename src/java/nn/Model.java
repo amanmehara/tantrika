@@ -18,6 +18,7 @@ package nn;
 
 import math.linalg.Matrix;
 import nn.activations.Activation;
+import nn.initializers.Initializer;
 import nn.optimizers.GradientDescent;
 import nn.optimizers.Optimizer;
 
@@ -70,22 +71,42 @@ public class Model {
             return this;
         }
 
-        public Builder addLayer(int units, int inputDim, Activation activation, boolean useBias) {
+        public Builder addLayer(int units, int inputDim, Activation activation, Initializer kernelInitializer) {
             if (layers.size() > 0) {
                 throw new IllegalStateException();
             }
 
-            layers.add(new Layer(units, inputDim, activation, useBias));
+            layers.add(new Layer(units, inputDim, activation, kernelInitializer));
             return this;
         }
 
-        public Builder addLayer(int units, Activation activation, boolean useBias) {
+        public Builder addLayer(int units, int inputDim, Activation activation, Initializer kernelInitializer, Initializer biasInitializer) {
+            if (layers.size() > 0) {
+                throw new IllegalStateException();
+            }
+
+            layers.add(new Layer(units, inputDim, activation, kernelInitializer, biasInitializer));
+            return this;
+        }
+
+        public Builder addLayer(int units, Activation activation, Initializer kernelInitializer) {
             if (layers.size() == 0) {
                 throw new IllegalStateException();
             }
 
             int inputDim = layers.get(layers.size() - 1).units();
-            layers.add(new Layer(units, inputDim, activation, useBias));
+            layers.add(new Layer(units, inputDim, activation, kernelInitializer));
+            return this;
+
+        }
+
+        public Builder addLayer(int units, Activation activation, Initializer kernelInitializer, Initializer biasInitializer) {
+            if (layers.size() == 0) {
+                throw new IllegalStateException();
+            }
+
+            int inputDim = layers.get(layers.size() - 1).units();
+            layers.add(new Layer(units, inputDim, activation, kernelInitializer, biasInitializer));
             return this;
 
         }

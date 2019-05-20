@@ -18,6 +18,8 @@ import math.linalg.Matrix;
 import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
+import nn.initializers.RandomUniform;
+import nn.initializers.Zeros;
 
 public class BackPropagationTrain {
 
@@ -66,11 +68,11 @@ public class BackPropagationTrain {
         this.layer = new Layer[numberOfLayers];
 
         // Input layer initialised
-        layer[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), false);
+        layer[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), new RandomUniform(-1.0, 1.0));
 
         // Layers other than inputs layer initialised
         for (int i = 1; i < numberOfLayers; i++) {
-            layer[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), true);
+            layer[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), new RandomUniform(-1.0, 1.0), new Zeros());
         }
 
         input = new double[numberOfSamples][layer[0].units()];

@@ -19,9 +19,7 @@ package nn;
 import math.linalg.Matrix;
 import math.linalg.Vector;
 import nn.activations.Activation;
-
-import java.util.Random;
-import java.util.function.Supplier;
+import nn.initializers.Initializer;
 
 public class Layer {
 
@@ -33,26 +31,24 @@ public class Layer {
     private Matrix kernel;
     private Vector bias;
 
-    public Layer(int units, int inputDimension, Activation activation, boolean useBias) {
+    public Layer(int units, int inputDimension, Activation activation, Initializer kernelInitializer) {
         this.units = units;
         this.inputDimension = inputDimension;
         this.activation = activation;
-        this.useBias = useBias;
+        this.useBias = false;
 
-        this.kernel = this.initializeKernel();
-        this.bias = useBias ? this.initializeBias() : null;
+        this.kernel = kernelInitializer.initializeMatrix(units, inputDimension);
+        this.bias = null;
     }
 
-    // TODO: Use Initializers.
-    private Matrix initializeKernel() {
-        Random random = new Random();
-        Supplier<Double> randomSupplier = () -> random.nextDouble() * 2.0 - 1.0;
-        return new Matrix(units, inputDimension, randomSupplier);
-    }
+    public Layer(int units, int inputDimension, Activation activation, Initializer kernelInitializer, Initializer biasInitializer) {
+        this.units = units;
+        this.inputDimension = inputDimension;
+        this.activation = activation;
+        this.useBias = true;
 
-    // TODO: Use Initializers.
-    private Vector initializeBias() {
-        return new Vector(units);
+        this.kernel = kernelInitializer.initializeMatrix(units, inputDimension);
+        this.bias = biasInitializer.initializeVector(units);
     }
 
     public int units() {
@@ -76,7 +72,7 @@ public class Layer {
     }
 
     public void kernel(Matrix kernel) {
-        if(this.kernel.outerSize() != kernel.outerSize() || this.kernel.innerSize() != kernel.innerSize()) {
+        if (this.kernel.outerSize() != kernel.outerSize() || this.kernel.innerSize() != kernel.innerSize()) {
             throw new IllegalArgumentException();
         }
 
