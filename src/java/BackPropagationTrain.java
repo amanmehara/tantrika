@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import math.LinAlg;
+import math.linalg.Matrix;
 import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
@@ -35,7 +35,7 @@ public class BackPropagationTrain {
 
     private double[][] input;
 
-    private double[][] actualOutput;
+    private Matrix actualOutput;
 
     private double[][] desiredOutput;
 
@@ -73,22 +73,22 @@ public class BackPropagationTrain {
             layer[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), true);
         }
 
-        input = new double[numberOfSamples][layer[0].units];
+        input = new double[numberOfSamples][layer[0].units()];
 
-        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].units];
+        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].units()];
 
-        actualOutput = new double[numberOfSamples][layer[numberOfLayers - 1].units];
+        actualOutput = new Matrix(numberOfSamples, layer[numberOfLayers - 1].units());
 
         // Assign Input Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[0].units; j++) {
+            for (int j = 0; j < layer[0].units(); j++) {
                 input[i][j] = inputSamples[i][j];
             }
         }
 
         // Assign Output Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].units; j++) {
+            for (int j = 0; j < layer[numberOfLayers - 1].units(); j++) {
                 desiredOutput[i][j] = outputSamples[i][j];
             }
         }
@@ -101,19 +101,17 @@ public class BackPropagationTrain {
     }
 
     // Calculate the nodes activations
-    private double[][] feedForward() {
-        var idx = 0;
-        layer[idx + 1].inputs = layer[idx].inputs;
-        idx++;
-        while (idx < numberOfLayers - 1) {
-            layer[idx + 1].inputs = layer[idx].computeOutputs();
-            idx++;
+    private Matrix feedForward(Matrix inputs) {
+        var index = 1;
+        while (index < numberOfLayers - 1) {
+            inputs = layer[index].computeOutputs(inputs);
+            index++;
         }
-        return layer[idx].computeOutputs();
+        return layer[index].computeOutputs(inputs);
     }
 
     // TODO: Vectorize (+ implicitly fix)
-    private void updateWeights(double[][] outputs) {
+    private void updateWeights(Matrix outputs) {
 //        calculateSignalErrors(outputs);
 //        backPropagateError();
     }
@@ -177,8 +175,8 @@ public class BackPropagationTrain {
     private void calculateOverallError() {
         overallError = 0;
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].units; j++) {
-                overallError += (Math.pow(desiredOutput[i][j] - actualOutput[i][j], 2));
+            for (int j = 0; j < layer[numberOfLayers - 1].units(); j++) {
+                overallError += (Math.pow(desiredOutput[i][j] - actualOutput.get(i, j), 2));
             }
         }
         overallError /= numberOfSamples;
@@ -190,8 +188,7 @@ public class BackPropagationTrain {
         long epochs = 0;
         do {
 
-            layer[0].inputs = LinAlg.matrixTranspose(input);
-            actualOutput = LinAlg.matrixTranspose(feedForward());
+            actualOutput = feedForward(new Matrix(input).transpose()).transpose();
             updateWeights(actualOutput);
             epochs++;
 

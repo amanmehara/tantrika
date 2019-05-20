@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import math.LinAlg;
+import math.linalg.Matrix;
 import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
@@ -37,11 +37,11 @@ public class BackPropagationTest {
             layers[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), true);
         }
 
-        inputs = new double[numberOfSamples][layers[0].units];
+        inputs = new double[numberOfSamples][layers[0].units()];
 
         // Assign Input Set
         for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layers[0].units; j++) {
+            for (int j = 0; j < layers[0].units(); j++) {
                 inputs[i][j] = inputSamples[i][j];
             }
         }
@@ -49,29 +49,28 @@ public class BackPropagationTest {
         // TODO: Enhance serialization and deserialization process.
         int weightsCount = 0;
         for (Layer layer : layers) {
-            for (int k = 0; k < layer.kernel.length; k++) {
-                for (int j = 0; j < layer.inputs.length; j++) {
-                    layer.kernel[k][j] = weights[weightsCount];
+            var kernel = new double[layer.units()][layer.inputDimension()];
+            for (int k = 0; k < layer.units(); k++) {
+                for (int j = 0; j < layer.inputDimension(); j++) {
+                    kernel[k][j] = weights[weightsCount];
                     weightsCount++;
                 }
             }
+            layer.kernel(new Matrix(kernel));
         }
     }
 
-    private double[][] feedForward() {
-        var idx = 0;
-        layers[idx + 1].inputs = layers[idx].inputs;
-        idx++;
-        while (idx < numberOfLayers - 1) {
-            layers[idx + 1].inputs = layers[idx].computeOutputs();
-            idx++;
+    private Matrix feedForward(Matrix inputs) {
+        var index = 1;
+        while (index < numberOfLayers - 1) {
+            inputs = layers[index].computeOutputs(inputs);
+            index++;
         }
-        return layers[idx].computeOutputs();
+        return layers[index].computeOutputs(inputs);
     }
 
-    public double[][] test() {
-        layers[0].inputs = LinAlg.matrixTranspose(inputs);
-        return LinAlg.matrixTranspose(feedForward());
+    public Matrix test() {
+        return feedForward(new Matrix(inputs).transpose()).transpose();
     }
 
 }

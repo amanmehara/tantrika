@@ -48,8 +48,8 @@ public class Testing {
 
             out = new PrintWriter("delta");
             int correct = 0;
-            for (int i = 0; i < actualOutputs.length; i++) {
-                double delta = actualOutputs[i][0] - outputSamples[i][0];
+            for (int i = 0; i < actualOutputs.outerSize(); i++) {
+                var delta = actualOutputs.get(i, 0) - outputSamples[i][0];
                 out.println(Math.abs(delta));
                 System.out.print(String.format("delta(%04d): ", i));
                 System.out.println(Math.abs(delta));
