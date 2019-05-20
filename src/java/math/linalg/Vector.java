@@ -46,6 +46,10 @@ public class Vector {
         return size;
     }
 
+    public double get(int index) {
+        return v[index];
+    }
+
     public Matrix broadcast(int dimension, int factor) {
         if (dimension != 1 && dimension != 2) {
             throw new IllegalArgumentException();

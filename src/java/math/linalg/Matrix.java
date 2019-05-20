@@ -70,6 +70,10 @@ public class Matrix {
         return innerSize;
     }
 
+    public double get(int outerIndex, int innerIndex) {
+        return m[outerIndex][innerIndex];
+    }
+
     public Matrix add(final Matrix matrix) {
         if (outerSize != matrix.outerSize || innerSize != matrix.innerSize) {
             throw new IllegalArgumentException();
