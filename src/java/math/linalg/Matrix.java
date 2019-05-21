@@ -88,6 +88,20 @@ public class Matrix {
         return sum;
     }
 
+    public Matrix hadamardProduct(Matrix matrix) {
+        if (outerSize != matrix.outerSize || innerSize != matrix.innerSize) {
+            throw new IllegalArgumentException();
+        }
+
+        var hadamardProduct = new Matrix(outerSize, innerSize);
+        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
+            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
+                hadamardProduct.m[outerIndex][innerIndex] = m[outerIndex][innerIndex] * matrix.m[outerIndex][innerIndex];
+            }
+        }
+        return hadamardProduct;
+    }
+
     // TODO: Use Strassen's matrix multiplication algorithm.
     public Matrix multiply(final Matrix matrix) {
         if (innerSize != matrix.outerSize) {
