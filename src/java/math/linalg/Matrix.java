@@ -22,11 +22,11 @@ import java.util.stream.IntStream;
 
 public class Matrix {
 
-    private final double[][] m;
+    private final Double[][] m;
     private final int outerSize;
     private final int innerSize;
 
-    public Matrix(final double[][] matrix) {
+    public Matrix(final Double[][] matrix) {
         if (matrix.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -45,13 +45,11 @@ public class Matrix {
     }
 
     public Matrix(final int outerSize, final int innerSize) {
-        m = new double[outerSize][innerSize];
-        this.outerSize = outerSize;
-        this.innerSize = innerSize;
+        this(outerSize, innerSize, () -> 0.0);
     }
 
     public Matrix(final int outerSize, final int innerSize, final Supplier<Double> supplier) {
-        m = new double[outerSize][innerSize];
+        m = new Double[outerSize][innerSize];
         this.outerSize = outerSize;
         this.innerSize = innerSize;
 
@@ -123,7 +121,7 @@ public class Matrix {
 
     public Vector reshape() {
         var size = outerSize * innerSize;
-        var v = new double[size];
+        var v = new Double[size];
         for (var index = 0; index < size; index++) {
             v[index] = m[index / innerSize][index % innerSize];
         }

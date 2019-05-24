@@ -20,21 +20,20 @@ import java.util.function.Supplier;
 
 public class Vector {
 
-    private final double[] v;
+    private final Double[] v;
     private final int size;
 
-    public Vector(double[] vector) {
+    public Vector(Double[] vector) {
         v = vector;
         size = vector.length;
     }
 
     public Vector(int size) {
-        v = new double[size];
-        this.size = size;
+        this(size, () -> 0.0);
     }
 
     public Vector(int size, Supplier<Double> supplier) {
-        v = new double[size];
+        v = new Double[size];
         this.size = size;
 
         for (var index = 0; index < size; index++) {
@@ -58,7 +57,7 @@ public class Vector {
         var outerSize = dimension == 2 ? factor : size;
         var innerSize = dimension == 1 ? factor : size;
 
-        var m = new double[outerSize][innerSize];
+        var m = new Double[outerSize][innerSize];
         for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
             for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
                 if (dimension == 2) {
@@ -76,7 +75,7 @@ public class Vector {
             throw new IllegalArgumentException();
         }
 
-        var m = new double[outerSize][innerSize];
+        var m = new Double[outerSize][innerSize];
         for (var index = 0; index < size; index++) {
             m[index / innerSize][index % innerSize] = v[index];
         }
