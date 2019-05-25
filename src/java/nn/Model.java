@@ -44,7 +44,7 @@ public class Model {
         return null;
     }
 
-    public void train(Matrix inputs, double[] outputs, int epochs) {
+    public void train(Matrix inputs, Matrix outputs, int epochs) {
         IntStream.range(0, epochs).forEach(epoch -> {
             feedForward(inputs);
             optimizer.optimize(this);
@@ -52,7 +52,7 @@ public class Model {
 
     }
 
-    public Matrix test(Matrix inputs, double[] outputs) {
+    public Matrix test(Matrix inputs, Matrix outputs) {
         return feedForward(inputs);
     }
 

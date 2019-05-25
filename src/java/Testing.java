@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
+import io.CSVReader;
+import math.linalg.Matrix;
+import math.linalg.Vector;
+
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Testing {
-    private static double[][] inputSamples;
-    private static double[][] outputSamples;
-    private static double[] weightsArray;
 
-    public static void main(String[] Args) {
 
-        List<int[]> samples = readSampleData("testing_dataset");
-
-        List<Double> weights = readWeights("weights1");
-
+    public static void main(String[] Args) throws IOException {
 
         int[] numberOfNodes = {30, 21, 1};
 
-        initializeIOSamples(samples);
-        initializeWeights(weights);
+        var samples = new CSVReader(Paths.get("testing_dataset")).read();
+        Matrix inputs = inputs(samples);
+        Matrix outputs = outputs(samples);
 
-        BackPropagationTest backPropagationTest = new BackPropagationTest(numberOfNodes, inputSamples, weightsArray);
+        Vector weights = new Vector(readWeights("weights1").toArray(Double[]::new));
+
+        BackPropagationTest backPropagationTest = new BackPropagationTest(
+                numberOfNodes,
+                inputs,
+                weights);
 
         var actualOutputs = backPropagationTest.test();
 
@@ -48,8 +51,8 @@ public class Testing {
 
             out = new PrintWriter("delta");
             int correct = 0;
-            for (int i = 0; i < actualOutputs.outerSize(); i++) {
-                var delta = actualOutputs.get(i, 0) - outputSamples[i][0];
+            for (int i = 0; i < actualOutputs.innerSize(); i++) {
+                var delta = actualOutputs.get(0, i) - outputs.get(0, i);
                 out.println(Math.abs(delta));
                 System.out.print(String.format("delta(%04d): ", i));
                 System.out.println(Math.abs(delta));
@@ -61,14 +64,14 @@ public class Testing {
                 meanSquareError += Math.pow(delta, 2.0);
             }
             out.close();
-            double accuracy = correct / (double) outputSamples.length;
-            double percentageAccuracy = correct / (double) outputSamples.length * 100;
+            double accuracy = correct / (double) outputs.innerSize();
+            double percentageAccuracy = correct / (double) outputs.innerSize() * 100;
 
             System.out.println(accuracy);
             System.out.println(percentageAccuracy);
 
-            meanDeviation /= (double) outputSamples.length;
-            meanSquareError /= (double) outputSamples.length;
+            meanDeviation /= (double) outputs.innerSize();
+            meanSquareError /= (double) outputs.innerSize();
 
             System.out.println(meanDeviation);
             System.out.println(meanSquareError);
@@ -79,24 +82,28 @@ public class Testing {
         }
     }
 
-    private static void initializeWeights(List<Double> weights) {
-        weightsArray = new double[weights.size()];
-
-        for (int i = 0; i < weights.size(); i++) {
-            weightsArray[i] = weights.get(i);
+    private static Matrix inputs(Matrix samples) {
+        var inputs = new Double[samples.outerSize()][samples.innerSize() - 1];
+        for (var outerIndex = 0;
+             outerIndex < samples.outerSize();
+             outerIndex++) {
+            for (var innerIndex = 0;
+                 innerIndex < samples.innerSize() - 1;
+                 innerIndex++) {
+                inputs[outerIndex][innerIndex] = samples.get(outerIndex, innerIndex);
+            }
         }
+        return new Matrix(inputs).transpose();
     }
 
-    private static void initializeIOSamples(List<int[]> samples) {
-        inputSamples = new double[samples.size()][samples.get(0).length - 1];
-        outputSamples = new double[samples.size()][1];
-
-        for (int i = 0; i < samples.size(); i++) {
-            for (int j = 0; j < samples.get(i).length - 1; j++) {
-                inputSamples[i][j] = samples.get(i)[j];
-            }
-            outputSamples[i][0] = samples.get(i)[samples.get(i).length - 1];
+    private static Matrix outputs(Matrix samples) {
+        var outputs = new Double[samples.outerSize()][1];
+        for (var outerIndex = 0;
+             outerIndex < samples.outerSize();
+             outerIndex++) {
+            outputs[outerIndex][0] = samples.get(outerIndex, samples.innerSize() - 1);
         }
+        return new Matrix(outputs).transpose();
     }
 
     private static List<Double> readWeights(String fileName) {
@@ -117,26 +124,4 @@ public class Testing {
         return weights;
     }
 
-    private static List<int[]> readSampleData(String fileName) {
-        BufferedReader bufferedReader;
-
-        List<int[]> samples = new ArrayList<>();
-        String sample;
-
-        try {
-            bufferedReader = new BufferedReader(new FileReader(fileName));
-            while ((sample = bufferedReader.readLine()) != null) {
-                samples.add(Arrays
-                        .stream(sample.split(","))
-                        .map(String::trim)
-                        .mapToInt(Integer::parseInt)
-                        .toArray());
-            }
-            bufferedReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return samples;
-    }
 }

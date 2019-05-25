@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import math.linalg.Matrix;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +26,7 @@ public class Training {
     public static void main(String[] Args) {
         BufferedReader bufferedReader;
 
-        List<int[]> samples = new ArrayList<>();
+        List<double[]> samples = new ArrayList<>();
         String sample;
 
 
@@ -36,7 +38,7 @@ public class Training {
                 samples.add(Arrays
                         .stream(sample.split(","))
                         .map(String::trim)
-                        .mapToInt(Integer::parseInt)
+                        .mapToDouble(Double::parseDouble)
                         .toArray());
             }
         } catch (IOException e) {
@@ -56,8 +58,8 @@ public class Training {
 
         System.out.println();
 
-        double[][] inputSamples = new double[samples.size()][samples.get(0).length - 1];
-        double[][] outputSamples = new double[samples.size()][1];
+        var inputSamples = new Double[samples.size()][samples.get(0).length - 1];
+        var outputSamples = new Double[samples.size()][1];
 
         for (int i = 0; i < samples.size(); i++) {
             for (int j = 0; j < samples.get(i).length - 1; j++) {
@@ -66,7 +68,14 @@ public class Training {
             outputSamples[i][0] = samples.get(i)[samples.get(i).length - 1];
         }
 
-        BackPropagationTrain backPropagationTrain = new BackPropagationTrain(numberOfNodes, inputSamples, outputSamples, 0.01, 0.01, 0.01, 1024);
+        BackPropagationTrain backPropagationTrain = new BackPropagationTrain(
+                numberOfNodes,
+                new Matrix(inputSamples).transpose(),
+                new Matrix(outputSamples).transpose(),
+                0.01,
+                0.01,
+                0.01,
+                1024);
 
         backPropagationTrain.trainNetwork();
 

@@ -15,64 +15,73 @@
  */
 
 import math.linalg.Matrix;
+import math.linalg.Vector;
 import nn.Layer;
 import nn.activations.Identity;
 import nn.activations.Tanh;
 import nn.initializers.RandomUniform;
 import nn.initializers.Zeros;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BackPropagationTest {
 
     private int numberOfLayers;
-    private Layer[] layers;
-    private double[][] inputs;
+    private List<Layer> layers;
+    private Matrix inputs;
 
-    public BackPropagationTest(int[] numberOfNodes, double[][] inputSamples, double[] weights) {
+    public BackPropagationTest(int[] numberOfNodes,
+                               Matrix inputs,
+                               Vector weights) {
 
-        // Initiate variables
-        int numberOfSamples = inputSamples.length;
+        this.inputs = inputs;
         this.numberOfLayers = numberOfNodes.length;
 
-        layers = new Layer[numberOfLayers];
-        layers[0] = new Layer(numberOfNodes[0], numberOfNodes[0], new Identity(), new RandomUniform(-1.0, 1.0));
+        layers = new ArrayList<>();
+        layers.add(new Layer(numberOfNodes[0],
+                numberOfNodes[0],
+                new Identity(),
+                new RandomUniform(-1.0, 1.0)));
         for (int i = 1; i < numberOfLayers; i++) {
-            layers[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), new RandomUniform(-1.0, 1.0), new Zeros());
-        }
-
-        inputs = new double[numberOfSamples][layers[0].units()];
-
-        // Assign Input Set
-        for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layers[0].units(); j++) {
-                inputs[i][j] = inputSamples[i][j];
-            }
+            layers.add(new Layer(
+                    numberOfNodes[i],
+                    numberOfNodes[i - 1],
+                    new Tanh(),
+                    new RandomUniform(-1.0, 1.0),
+                    new Zeros()));
         }
 
         // TODO: Enhance serialization and deserialization process.
         int weightsCount = 0;
         for (Layer layer : layers) {
-            var kernel = new double[layer.units()][layer.inputDimension()];
+            var kernel = new Double[layer.units()][layer.inputDimension()];
             for (int k = 0; k < layer.units(); k++) {
                 for (int j = 0; j < layer.inputDimension(); j++) {
-                    kernel[k][j] = weights[weightsCount];
+                    kernel[k][j] = weights.get(weightsCount);
                     weightsCount++;
                 }
             }
             layer.kernel(new Matrix(kernel));
+
+            if (layer.useBias()) {
+                // TODO: Persist bias.
+                layer.bias(new Zeros().initializeVector(layer.units()));
+            }
         }
     }
 
     private Matrix feedForward(Matrix inputs) {
         var index = 1;
         while (index < numberOfLayers - 1) {
-            inputs = layers[index].computeOutputs(inputs);
+            inputs = layers.get(index).computeOutputs(inputs);
             index++;
         }
-        return layers[index].computeOutputs(inputs);
+        return layers.get(index).computeOutputs(inputs);
     }
 
     public Matrix test() {
-        return feedForward(new Matrix(inputs).transpose()).transpose();
+        return feedForward(inputs);
     }
 
 }

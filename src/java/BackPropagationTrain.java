@@ -35,11 +35,11 @@ public class BackPropagationTrain {
 
     private int sampleNumber;
 
-    private double[][] input;
+    private Matrix inputs;
+    private Matrix outputs;
 
     private Matrix actualOutput;
 
-    private double[][] desiredOutput;
 
     private long maximumEpochs;
 
@@ -49,20 +49,23 @@ public class BackPropagationTrain {
 
     //Constructor
     public BackPropagationTrain(int[] numberOfNodes,
-                                double[][] inputSamples,
-                                double[][] outputSamples,
+                                Matrix inputs,
+                                Matrix outputs,
                                 double learningRate,
                                 double moment,
                                 double minimumError,
                                 long maximumEpochs) {
 
         // Initiate variables
-        this.numberOfSamples = inputSamples.length;
+        this.numberOfSamples = inputs.innerSize();
         this.minimumError = minimumError;
         this.learningRate = learningRate;
         this.momentum = moment;
         this.numberOfLayers = numberOfNodes.length;
         this.maximumEpochs = maximumEpochs;
+
+        this.inputs = inputs;
+        this.outputs = outputs;
 
         // Create network layers
         this.layer = new Layer[numberOfLayers];
@@ -75,25 +78,8 @@ public class BackPropagationTrain {
             layer[i] = new Layer(numberOfNodes[i], numberOfNodes[i - 1], new Tanh(), new RandomUniform(-1.0, 1.0), new Zeros());
         }
 
-        input = new double[numberOfSamples][layer[0].units()];
-
-        desiredOutput = new double[numberOfSamples][layer[numberOfLayers - 1].units()];
-
         actualOutput = new Matrix(numberOfSamples, layer[numberOfLayers - 1].units());
 
-        // Assign Input Set
-        for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[0].units(); j++) {
-                input[i][j] = inputSamples[i][j];
-            }
-        }
-
-        // Assign Output Set
-        for (int i = 0; i < numberOfSamples; i++) {
-            for (int j = 0; j < layer[numberOfLayers - 1].units(); j++) {
-                desiredOutput[i][j] = outputSamples[i][j];
-            }
-        }
     }
 
     // Getter
@@ -126,7 +112,7 @@ public class BackPropagationTrain {
 //        var outputs = layer[outputLayer].computeOutputs();
 //        for (int i = 0; i < layer[outputLayer].units; i++) {
 //            layer[outputLayer].signalError[i]
-//                    = (desiredOutput[sampleNumber][i] - outputs[i])
+//                    = (outputs[sampleNumber][i] - outputs[i])
 //                    * layer[outputLayer].activation().derivative(outputs[i]);
 //        }
 //
@@ -178,7 +164,7 @@ public class BackPropagationTrain {
         overallError = 0;
         for (int i = 0; i < numberOfSamples; i++) {
             for (int j = 0; j < layer[numberOfLayers - 1].units(); j++) {
-                overallError += (Math.pow(desiredOutput[i][j] - actualOutput.get(i, j), 2));
+                overallError += (Math.pow(outputs.get(i, j) - actualOutput.get(i, j), 2));
             }
         }
         overallError /= numberOfSamples;
@@ -190,7 +176,7 @@ public class BackPropagationTrain {
         long epochs = 0;
         do {
 
-            actualOutput = feedForward(new Matrix(input).transpose()).transpose();
+//            actualOutput = feedForward(new Matrix(inputs).transpose()).transpose();
             updateWeights(actualOutput);
             epochs++;
 
