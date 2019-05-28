@@ -20,11 +20,11 @@ import java.util.function.Supplier;
 
 public class Vector {
 
-    private final Double[] v;
+    private final Double[] array;
     private final int size;
 
     public Vector(Double[] vector) {
-        v = vector;
+        array = vector;
         size = vector.length;
     }
 
@@ -33,11 +33,11 @@ public class Vector {
     }
 
     public Vector(int size, Supplier<Double> supplier) {
-        v = new Double[size];
+        array = new Double[size];
         this.size = size;
 
         for (var index = 0; index < size; index++) {
-            v[index] = supplier.get();
+            array[index] = supplier.get();
         }
     }
 
@@ -46,7 +46,7 @@ public class Vector {
     }
 
     public double get(int index) {
-        return v[index];
+        return array[index];
     }
 
     public Matrix broadcast(int dimension, int factor) {
@@ -61,9 +61,9 @@ public class Vector {
         for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
             for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
                 if (dimension == 2) {
-                    m[outerIndex][innerIndex] = v[innerIndex];
+                    m[outerIndex][innerIndex] = array[innerIndex];
                 } else {
-                    m[outerIndex][innerIndex] = v[outerIndex];
+                    m[outerIndex][innerIndex] = array[outerIndex];
                 }
             }
         }
@@ -71,15 +71,7 @@ public class Vector {
     }
 
     public Matrix reshape(int outerSize, int innerSize) {
-        if (size != outerSize * innerSize) {
-            throw new IllegalArgumentException();
-        }
-
-        var m = new Double[outerSize][innerSize];
-        for (var index = 0; index < size; index++) {
-            m[index / innerSize][index % innerSize] = v[index];
-        }
-        return new Matrix(m);
+        return new Matrix(outerSize, innerSize, array);
     }
 
 }

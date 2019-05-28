@@ -22,18 +22,19 @@ import java.util.stream.IntStream;
 
 public class Matrix {
 
-    private final Double[][] m;
+    private final Double[] array;
     private final int outerSize;
     private final int innerSize;
+    private final int size;
 
     public Matrix(final Double[][] matrix) {
         if (matrix.length == 0) {
             throw new IllegalArgumentException();
         }
 
-        m = matrix;
         outerSize = matrix.length;
         innerSize = matrix[0].length;
+        size = outerSize * innerSize;
 
         boolean isInvalid = IntStream
                 .range(0, matrix.length)
@@ -42,6 +43,13 @@ public class Matrix {
         if (isInvalid) {
             throw new IllegalArgumentException();
         }
+
+
+        array = new Double[size];
+
+        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
+            System.arraycopy(matrix[outerIndex], 0, array, outerIndex * innerSize, innerSize);
+        }
     }
 
     public Matrix(final int outerSize, final int innerSize) {
@@ -49,15 +57,27 @@ public class Matrix {
     }
 
     public Matrix(final int outerSize, final int innerSize, final Supplier<Double> supplier) {
-        m = new Double[outerSize][innerSize];
         this.outerSize = outerSize;
         this.innerSize = innerSize;
+        size = outerSize * innerSize;
+        array = new Double[size];
 
-        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
-            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                m[outerIndex][innerIndex] = supplier.get();
-            }
+        for (var index = 0; index < size; index++) {
+            array[index] = supplier.get();
         }
+    }
+
+    public Matrix(final int outerSize, final int innerSize, final Double[] array) {
+        var size = outerSize * innerSize;
+
+        if (size != array.length) {
+            throw new IllegalArgumentException();
+        }
+
+        this.outerSize = outerSize;
+        this.innerSize = innerSize;
+        this.size = size;
+        this.array = array;
     }
 
     public int outerSize() {
@@ -69,7 +89,7 @@ public class Matrix {
     }
 
     public double get(int outerIndex, int innerIndex) {
-        return m[outerIndex][innerIndex];
+        return array[outerIndex * innerSize + innerIndex];
     }
 
     public Matrix add(final Matrix matrix) {
@@ -78,10 +98,8 @@ public class Matrix {
         }
 
         var sum = new Matrix(outerSize, innerSize);
-        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
-            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                sum.m[outerIndex][innerIndex] = m[outerIndex][innerIndex] + matrix.m[outerIndex][innerIndex];
-            }
+        for (var index = 0; index < size; index++) {
+            sum.array[index] = array[index] + matrix.array[index];
         }
         return sum;
     }
@@ -92,10 +110,8 @@ public class Matrix {
         }
 
         var hadamardProduct = new Matrix(outerSize, innerSize);
-        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
-            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                hadamardProduct.m[outerIndex][innerIndex] = m[outerIndex][innerIndex] * matrix.m[outerIndex][innerIndex];
-            }
+        for (var index = 0; index < size; index++) {
+            hadamardProduct.array[index] = array[index] * matrix.array[index];
         }
         return hadamardProduct;
     }
@@ -109,9 +125,10 @@ public class Matrix {
         var product = new Matrix(outerSize, matrix.innerSize);
         for (var outerIndex = 0; outerIndex < product.outerSize; outerIndex++) {
             for (var innerIndex = 0; innerIndex < product.innerSize; innerIndex++) {
-                product.m[outerIndex][innerIndex] = 0.0;
+                var index = outerIndex * product.innerSize + innerIndex;
+                product.array[index] = 0.0;
                 for (var cumIndex = 0; cumIndex < innerSize; cumIndex++) {
-                    product.m[outerIndex][innerIndex] += m[outerIndex][cumIndex] * matrix.m[cumIndex][innerIndex];
+                    product.array[index] += get(outerIndex, cumIndex) * matrix.get(cumIndex, innerIndex);
                 }
             }
         }
@@ -120,30 +137,22 @@ public class Matrix {
     }
 
     public Vector reshape() {
-        var size = outerSize * innerSize;
-        var v = new Double[size];
-        for (var index = 0; index < size; index++) {
-            v[index] = m[index / innerSize][index % innerSize];
-        }
-        return new Vector(v);
+        return new Vector(array);
     }
 
     public Matrix scale(final double factor) {
         var scale = new Matrix(outerSize, innerSize);
-        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
-            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                scale.m[outerIndex][innerIndex] = m[outerIndex][innerIndex] * factor;
-            }
+
+        for (var index = 0; index < size; index++) {
+            scale.array[index] = array[index] * factor;
         }
         return scale;
     }
 
     public Matrix transform(final Function<Double, Double> function) {
         var transform = new Matrix(outerSize, innerSize);
-        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
-            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                transform.m[outerIndex][innerIndex] = function.apply(m[outerIndex][innerIndex]);
-            }
+        for (var index = 0; index < size; index++) {
+            transform.array[index] = function.apply(array[index]);
         }
         return transform;
     }
@@ -152,7 +161,8 @@ public class Matrix {
         var transpose = new Matrix(innerSize, outerSize);
         for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
             for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                transpose.m[innerIndex][outerIndex] = m[outerIndex][innerIndex];
+                var transposeIndex = innerIndex * outerSize + outerIndex;
+                transpose.array[transposeIndex] = get(outerIndex, innerIndex);
             }
         }
         return transpose;
