@@ -1,1 +1,3 @@
-# backpropagation-neural-network
+# Tantrika
+
+An object oriented neural network library.
