@@ -1,4 +1,4 @@
-/*
+package com.amanmehara.tantrika;/*
  * Copyright 2019 Aman Mehara
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Matrix;
 
 import java.io.*;
 import java.util.ArrayList;

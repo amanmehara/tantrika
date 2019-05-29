@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-package nn.activations;
+package com.amanmehara.tantrika.nn.initializers;
 
-public class Sigmoid implements Activation {
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Vector;
 
-    @Override
-    public double value(double input) {
-        return 1.0 / (1.0 + Math.exp(-1.0 * input));
+public class Constant implements Initializer {
+
+    private final double constant;
+
+    public Constant(final double constant) {
+        this.constant = constant;
     }
 
     @Override
-    public double derivative(double input) {
-        return this.value(input) * (1.0 - this.value(input));
+    public Matrix initializeMatrix(final int outerSize, final int innerSize) {
+        return new Matrix(outerSize, innerSize, () -> constant);
+    }
+
+    @Override
+    public Vector initializeVector(final int size) {
+        return new Vector(size, () -> constant);
     }
 
 }

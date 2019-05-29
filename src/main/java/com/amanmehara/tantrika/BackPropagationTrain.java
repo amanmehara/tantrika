@@ -1,4 +1,4 @@
-/*
+package com.amanmehara.tantrika;/*
  * Copyright 2019 Aman Mehara
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import math.linalg.Matrix;
-import nn.Layer;
-import nn.activations.Identity;
-import nn.activations.Tanh;
-import nn.initializers.RandomUniform;
-import nn.initializers.Zeros;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.nn.Layer;
+import com.amanmehara.tantrika.nn.activations.Identity;
+import com.amanmehara.tantrika.nn.activations.Tanh;
+import com.amanmehara.tantrika.nn.initializers.RandomUniform;
+import com.amanmehara.tantrika.nn.initializers.Zeros;
 
 public class BackPropagationTrain {
 
@@ -170,7 +170,7 @@ public class BackPropagationTrain {
         overallError /= numberOfSamples;
     }
 
-    // Training the Neural Network
+    // com.amanmehara.tantrika.Training the Neural Network
     public void trainNetwork() {
 
         long epochs = 0;

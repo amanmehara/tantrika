@@ -1,4 +1,4 @@
-/*
+package com.amanmehara.tantrika;/*
  * Copyright 2019 Aman Mehara
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import io.CSVReader;
-import math.linalg.Matrix;
-import math.linalg.Vector;
+import com.amanmehara.tantrika.io.CSVReader;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Vector;
 
 import java.io.*;
 import java.nio.file.Paths;

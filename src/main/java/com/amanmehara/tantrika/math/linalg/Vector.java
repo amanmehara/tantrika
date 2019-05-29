@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package math.linalg;
+package com.amanmehara.tantrika.math.linalg;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class Vector {
 
@@ -50,24 +52,35 @@ public class Vector {
     }
 
     public Matrix broadcast(int dimension, int factor) {
-        if (dimension != 1 && dimension != 2) {
-            throw new IllegalArgumentException();
+
+
+        var matrixSize = size * factor;
+        var matrix = new Double[matrixSize];
+
+        int outerSize;
+        int innerSize;
+
+        switch (dimension) {
+            case 1:
+                outerSize = this.size;
+                innerSize = factor;
+                IntStream.range(0, this.size).forEach(index -> {
+                    Arrays.fill(matrix, index * factor, (index + 1) * factor, array[index]);
+                });
+                break;
+            case 2:
+                outerSize = factor;
+                innerSize = this.size;
+                IntStream.range(0, this.size).forEach(index -> {
+                    System.arraycopy(array, 0, matrix, index * factor, factor);
+                });
+                break;
+            default:
+                throw new IllegalArgumentException();
+
         }
 
-        var outerSize = dimension == 2 ? factor : size;
-        var innerSize = dimension == 1 ? factor : size;
-
-        var m = new Double[outerSize][innerSize];
-        for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
-            for (var innerIndex = 0; innerIndex < innerSize; innerIndex++) {
-                if (dimension == 2) {
-                    m[outerIndex][innerIndex] = array[innerIndex];
-                } else {
-                    m[outerIndex][innerIndex] = array[outerIndex];
-                }
-            }
-        }
-        return new Matrix(m);
+        return new Matrix(outerSize, innerSize, matrix);
     }
 
     public Matrix reshape(int outerSize, int innerSize) {

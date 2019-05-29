@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package nn.activations;
+package com.amanmehara.tantrika.nn.optimizers;
 
-public interface Activation {
+import com.amanmehara.tantrika.nn.Model;
 
-    double value(double input);
+public interface Optimizer<M extends Model> {
 
-    double derivative(double input);
+    void optimize(M model);
 
 }

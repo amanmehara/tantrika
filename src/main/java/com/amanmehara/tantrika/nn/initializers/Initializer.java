@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package nn.optimizers;
+package com.amanmehara.tantrika.nn.initializers;
 
-import nn.Model;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Vector;
 
-public class GradientDescent<M extends Model> implements Optimizer<M> {
+public interface Initializer {
 
-    @Override
-    public void optimize(M model) {
-        //TODO: Implement!
-        throw new UnsupportedOperationException();
-    }
+    Matrix initializeMatrix(final int outerSize, final int innerSize);
+
+    Vector initializeVector(final int size);
 
 }

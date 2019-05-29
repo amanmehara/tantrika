@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package nn;
+package com.amanmehara.tantrika.nn;
 
-import math.linalg.Matrix;
-import math.linalg.Vector;
-import nn.activations.Activation;
-import nn.initializers.Initializer;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Vector;
+import com.amanmehara.tantrika.nn.activations.Activation;
+import com.amanmehara.tantrika.nn.initializers.Initializer;
 
 public class Layer {
 

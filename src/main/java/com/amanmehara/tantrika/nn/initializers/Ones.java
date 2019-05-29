@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package nn.initializers;
+package com.amanmehara.tantrika.nn.initializers;
 
-import math.linalg.Matrix;
-import math.linalg.Vector;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Vector;
 
-public class Zeros implements Initializer {
+public class Ones implements Initializer {
 
     @Override
     public Matrix initializeMatrix(final int outerSize, final int innerSize) {
-        return new Matrix(outerSize, innerSize);
+        return new Matrix(outerSize, innerSize, () -> 1.0);
     }
 
     @Override
     public Vector initializeVector(final int size) {
-        return new Vector(size);
+        return new Vector(size, () -> 1.0);
     }
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package math.linalg;
+package com.amanmehara.tantrika.math.linalg;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package nn;
+package com.amanmehara.tantrika.nn;
 
-import math.linalg.Matrix;
-import nn.activations.Activation;
-import nn.initializers.Initializer;
-import nn.optimizers.GradientDescent;
-import nn.optimizers.Optimizer;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.nn.activations.Activation;
+import com.amanmehara.tantrika.nn.initializers.Initializer;
+import com.amanmehara.tantrika.nn.optimizers.GradientDescent;
+import com.amanmehara.tantrika.nn.optimizers.Optimizer;
 
 import java.util.ArrayList;
 import java.util.List;

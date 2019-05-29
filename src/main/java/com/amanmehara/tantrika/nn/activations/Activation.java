@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package nn.initializers;
+package com.amanmehara.tantrika.nn.activations;
 
-import math.linalg.Matrix;
-import math.linalg.Vector;
+public interface Activation {
 
-public class Constant implements Initializer {
+    double value(double input);
 
-    private final double constant;
-
-    public Constant(final double constant) {
-        this.constant = constant;
-    }
-
-    @Override
-    public Matrix initializeMatrix(final int outerSize, final int innerSize) {
-        return new Matrix(outerSize, innerSize, () -> constant);
-    }
-
-    @Override
-    public Vector initializeVector(final int size) {
-        return new Vector(size, () -> constant);
-    }
+    double derivative(double input);
 
 }

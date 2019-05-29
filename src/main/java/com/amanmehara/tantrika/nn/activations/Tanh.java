@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nn.activations;
+package com.amanmehara.tantrika.nn.activations;
 
 public class Tanh implements Activation {
 

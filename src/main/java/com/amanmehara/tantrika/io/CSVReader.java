@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io;
+package com.amanmehara.tantrika.io;
 
-import math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Matrix;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package nn.activations;
+package com.amanmehara.tantrika.nn.activations;
 
-public class Identity implements Activation {
+public class Sigmoid implements Activation {
 
     @Override
     public double value(double input) {
-        return input;
+        return 1.0 / (1.0 + Math.exp(-1.0 * input));
     }
 
     @Override
     public double derivative(double input) {
-        return 1.0;
+        return this.value(input) * (1.0 - this.value(input));
     }
 
 }

@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package nn.optimizers;
+package com.amanmehara.tantrika.nn.activations;
 
-import nn.Model;
+public class ReLU implements Activation {
 
-public interface Optimizer<M extends Model> {
+    @Override
+    public double value(double input) {
+        return Math.max(0.0, input);
+    }
 
-    void optimize(M model);
+    @Override
+    public double derivative(double input) {
+        return input <= 0.0 ? 0.0 : 1.0;
+    }
 
 }

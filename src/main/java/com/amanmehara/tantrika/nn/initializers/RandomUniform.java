@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package nn.initializers;
+package com.amanmehara.tantrika.nn.initializers;
 
-import math.linalg.Matrix;
-import math.linalg.Vector;
+import com.amanmehara.tantrika.math.linalg.Matrix;
+import com.amanmehara.tantrika.math.linalg.Vector;
 
 import java.util.Random;
 import java.util.function.Supplier;

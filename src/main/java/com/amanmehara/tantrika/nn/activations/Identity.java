@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package nn.initializers;
+package com.amanmehara.tantrika.nn.activations;
 
-import math.linalg.Matrix;
-import math.linalg.Vector;
+public class Identity implements Activation {
 
-public interface Initializer {
+    @Override
+    public double value(double input) {
+        return input;
+    }
 
-    Matrix initializeMatrix(final int outerSize, final int innerSize);
-
-    Vector initializeVector(final int size);
+    @Override
+    public double derivative(double input) {
+        return 1.0;
+    }
 
 }
