@@ -55,7 +55,7 @@ public class BackPropagationTest {
         // TODO: Enhance serialization and deserialization process.
         int weightsCount = 0;
         for (Layer layer : layers) {
-            var kernel = new Double[layer.units()][layer.inputDimension()];
+            var kernel = new double[layer.units()][layer.inputDimension()];
             for (int k = 0; k < layer.units(); k++) {
                 for (int j = 0; j < layer.inputDimension(); j++) {
                     kernel[k][j] = weights.get(weightsCount);

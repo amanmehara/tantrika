@@ -58,8 +58,8 @@ public class Training {
 
         System.out.println();
 
-        var inputSamples = new Double[samples.size()][samples.get(0).length - 1];
-        var outputSamples = new Double[samples.size()][1];
+        var inputSamples = new double[samples.size()][samples.get(0).length - 1];
+        var outputSamples = new double[samples.size()][1];
 
         for (int i = 0; i < samples.size(); i++) {
             for (int j = 0; j < samples.get(i).length - 1; j++) {

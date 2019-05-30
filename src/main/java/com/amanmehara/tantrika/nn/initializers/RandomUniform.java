@@ -20,7 +20,7 @@ import com.amanmehara.tantrika.math.linalg.Matrix;
 import com.amanmehara.tantrika.math.linalg.Vector;
 
 import java.util.Random;
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 
 public class RandomUniform implements Initializer {
 
@@ -28,7 +28,7 @@ public class RandomUniform implements Initializer {
     private final double maximum;
 
     public RandomUniform(final double minimum, final double maximum) {
-        if(minimum > maximum) {
+        if (minimum > maximum) {
             throw new IllegalArgumentException();
         }
 
@@ -39,14 +39,14 @@ public class RandomUniform implements Initializer {
     @Override
     public Matrix initializeMatrix(final int outerSize, final int innerSize) {
         var random = new Random();
-        Supplier<Double> randomSupplier = () -> minimum + random.nextDouble() * (maximum - minimum);
+        DoubleSupplier randomSupplier = () -> minimum + random.nextDouble() * (maximum - minimum);
         return new Matrix(outerSize, innerSize, randomSupplier);
     }
 
     @Override
     public Vector initializeVector(final int size) {
         var random = new Random();
-        Supplier<Double> randomSupplier = () -> minimum + random.nextDouble() * (maximum - minimum);
+        DoubleSupplier randomSupplier = () -> minimum + random.nextDouble() * (maximum - minimum);
         return new Vector(size, randomSupplier);
     }
 

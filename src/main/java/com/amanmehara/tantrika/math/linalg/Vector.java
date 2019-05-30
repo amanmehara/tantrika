@@ -17,15 +17,15 @@
 package com.amanmehara.tantrika.math.linalg;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 import java.util.stream.IntStream;
 
 public class Vector {
 
-    private final Double[] array;
+    private final double[] array;
     private final int size;
 
-    public Vector(Double[] vector) {
+    public Vector(double[] vector) {
         array = vector;
         size = vector.length;
     }
@@ -34,12 +34,12 @@ public class Vector {
         this(size, () -> 0.0);
     }
 
-    public Vector(int size, Supplier<Double> supplier) {
-        array = new Double[size];
+    public Vector(int size, DoubleSupplier supplier) {
+        array = new double[size];
         this.size = size;
 
         for (var index = 0; index < size; index++) {
-            array[index] = supplier.get();
+            array[index] = supplier.getAsDouble();
         }
     }
 
@@ -55,7 +55,7 @@ public class Vector {
 
 
         var matrixSize = size * factor;
-        var matrix = new Double[matrixSize];
+        var matrix = new double[matrixSize];
 
         int outerSize;
         int innerSize;

@@ -34,14 +34,14 @@ public class CSVReader {
     }
 
     public Matrix read() throws IOException {
-        Function<String, Double[]> parseLine = line -> Arrays
+        Function<String, double[]> parseLine = line -> Arrays
                 .stream(line.split(","))
                 .map(String::trim)
-                .map(Double::parseDouble)
-                .toArray(Double[]::new);
+                .mapToDouble(Double::parseDouble)
+                .toArray();
 
         try (Stream<String> lines = Files.lines(path)) {
-            return new Matrix(lines.map(parseLine).toArray(Double[][]::new));
+            return new Matrix(lines.map(parseLine).toArray(double[][]::new));
         }
     }
 

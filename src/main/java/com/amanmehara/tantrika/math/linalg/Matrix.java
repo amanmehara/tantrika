@@ -16,18 +16,18 @@
 
 package com.amanmehara.tantrika.math.linalg;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
+import java.util.function.DoubleUnaryOperator;
 import java.util.stream.IntStream;
 
 public class Matrix {
 
-    private final Double[] array;
+    private final double[] array;
     private final int outerSize;
     private final int innerSize;
     private final int size;
 
-    public Matrix(final Double[][] matrix) {
+    public Matrix(final double[][] matrix) {
         if (matrix.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -45,7 +45,7 @@ public class Matrix {
         }
 
 
-        array = new Double[size];
+        array = new double[size];
 
         for (var outerIndex = 0; outerIndex < outerSize; outerIndex++) {
             System.arraycopy(matrix[outerIndex], 0, array, outerIndex * innerSize, innerSize);
@@ -56,18 +56,18 @@ public class Matrix {
         this(outerSize, innerSize, () -> 0.0);
     }
 
-    public Matrix(final int outerSize, final int innerSize, final Supplier<Double> supplier) {
+    public Matrix(final int outerSize, final int innerSize, final DoubleSupplier supplier) {
         this.outerSize = outerSize;
         this.innerSize = innerSize;
         size = outerSize * innerSize;
-        array = new Double[size];
+        array = new double[size];
 
         for (var index = 0; index < size; index++) {
-            array[index] = supplier.get();
+            array[index] = supplier.getAsDouble();
         }
     }
 
-    public Matrix(final int outerSize, final int innerSize, final Double[] array) {
+    public Matrix(final int outerSize, final int innerSize, final double[] array) {
         var size = outerSize * innerSize;
 
         if (size != array.length) {
@@ -149,10 +149,10 @@ public class Matrix {
         return scale;
     }
 
-    public Matrix transform(final Function<Double, Double> function) {
+    public Matrix transform(final DoubleUnaryOperator function) {
         var transform = new Matrix(outerSize, innerSize);
         for (var index = 0; index < size; index++) {
-            transform.array[index] = function.apply(array[index]);
+            transform.array[index] = function.applyAsDouble(array[index]);
         }
         return transform;
     }

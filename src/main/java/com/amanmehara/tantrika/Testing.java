@@ -19,9 +19,10 @@ import com.amanmehara.tantrika.math.linalg.Matrix;
 import com.amanmehara.tantrika.math.linalg.Vector;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
 public class Testing {
 
@@ -34,7 +35,7 @@ public class Testing {
         Matrix inputs = inputs(samples);
         Matrix outputs = outputs(samples);
 
-        Vector weights = new Vector(readWeights("weights1").toArray(Double[]::new));
+        Vector weights = new Vector(readWeights(Paths.get("weights1")));
 
         BackPropagationTest backPropagationTest = new BackPropagationTest(
                 numberOfNodes,
@@ -83,7 +84,7 @@ public class Testing {
     }
 
     private static Matrix inputs(Matrix samples) {
-        var inputs = new Double[samples.outerSize()][samples.innerSize() - 1];
+        var inputs = new double[samples.outerSize()][samples.innerSize() - 1];
         for (var outerIndex = 0;
              outerIndex < samples.outerSize();
              outerIndex++) {
@@ -97,7 +98,7 @@ public class Testing {
     }
 
     private static Matrix outputs(Matrix samples) {
-        var outputs = new Double[samples.outerSize()][1];
+        var outputs = new double[samples.outerSize()][1];
         for (var outerIndex = 0;
              outerIndex < samples.outerSize();
              outerIndex++) {
@@ -106,22 +107,10 @@ public class Testing {
         return new Matrix(outputs).transpose();
     }
 
-    private static List<Double> readWeights(String fileName) {
-        BufferedReader bufferedReader;
-
-        List<Double> weights = new ArrayList<>();
-        String weight;
-
-        try {
-            bufferedReader = new BufferedReader(new FileReader(fileName));
-            while ((weight = bufferedReader.readLine()) != null) {
-                weights.add(Double.parseDouble(weight));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static double[] readWeights(Path path) throws IOException {
+        try (Stream<String> lines = Files.lines(path)) {
+            return lines.mapToDouble(Double::parseDouble).toArray();
         }
-
-        return weights;
     }
 
 }
