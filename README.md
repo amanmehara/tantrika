@@ -1,4 +1,4 @@
-# Tantrika
+# तन्त्रिका — Tantrika
 
 An object oriented neural network library.
 
